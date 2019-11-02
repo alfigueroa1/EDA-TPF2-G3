@@ -4,8 +4,8 @@ class NodeViewer :
 	public Observer
 {
 public:
-	NodeViewer();
-	virtual void update(void*);
-	void cycle();
+	NodeViewer() {};
+	virtual void update(void*) {};
+	void cycle() {};
 };
 

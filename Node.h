@@ -6,9 +6,17 @@
 typedef bool errorType;
 typedef string ID;
 
+//ALEX WAS HERE:
+struct sSocket {
+	sSocket() : ip(), port() {}
+	string ip;
+	string port;
+};
+
+
 class Node : public Subject {
 public:
-	Node();
+	Node(string _ID);		//ALEX
 	~Node();
 	errorType postBlock(unsigned int neighbourPos);
 	errorType getBlockHeader(unsigned int height, unsigned int neighbourPos);
@@ -20,13 +28,14 @@ public:
 	ID getID();
 	string getIP() { return IP; }
 	string getPort() { return to_string(port); }
-	vector<string> getNeighbours();
-	vector<Transaction>* getTransactions() { return &txs; };
-	vector<string>* getFilters() { return &filters; };
+	const vector<sSocket>* getNeighbours() { return &neighbourhood; }; //ALEX WAS HERE AGAIN
+	const vector<Transaction>* getTransactions() { return &txs; };
+	const vector<string>* getFilters() { return &filters; };
 	void keepListening();
 	void keepSending();
 	
 private:
+	string myID;			//ALEX
 	void addBlock(Block block);
 	string IP;
 	unsigned int port;
@@ -34,7 +43,7 @@ private:
 	//Server
 	//Client vector
 	vector<BlockChain> dummieChain;
-	vector<string> neighbourhood;
+	vector<sSocket> neighbourhood;
 	vector<string> filters;
 	vector<Transaction> txs;
 };

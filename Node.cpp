@@ -1,6 +1,6 @@
 #include "Node.h"
 
-Node::Node() {
+Node::Node(string _ID) : myID(_ID) {
 
 }
 Node::~Node() {
@@ -35,10 +35,8 @@ void Node::AddNeighbour(string _ID, string _port) {
 
 }
 
-ID Node::getID() {
-	ID aux;
-
-	return aux;
+ID Node::getID() {			//ALEX
+	return myID;
 }
 void keepListening() {
 

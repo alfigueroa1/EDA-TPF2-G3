@@ -10,7 +10,7 @@ EDANet::~EDANet() {
 
 }
 
-bool EDANet::createNode(const string& IP, const string& port, const string& ID)
+bool EDANet::createNode(const string& IP, const string& port, const string& ID)	//ALEX
 {
 	bool ret(true);
 
@@ -18,7 +18,8 @@ bool EDANet::createNode(const string& IP, const string& port, const string& ID)
 	cout << "Port:" << port << endl;
 	cout << "ID: " << ID << endl;
 
-	nodes.emplace_back();
+	nodes.emplace_back(ID);
+	
 
 	notifyAllObservers();
 
