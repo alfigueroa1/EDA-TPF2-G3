@@ -1,5 +1,6 @@
 #include "NodeController.h"
 #include "imgui.h"
+#include <cstring>
 
 #define CHILD_W	220
 #define CHILD_H	330
@@ -8,7 +9,8 @@
 
 
 NodeController::NodeController(Node& m) :
-	model(&m), mID(), mNeighbours(), cstate(OUT), windowName()
+	model(&m), mID(), mNeighbours(), cstate(OUT), windowName(), availableNeighbours(false),
+	currNeighbour(0), comboNeighbour()
 {
 	mID = model->getID();
 	windowName = mID + "##node";
@@ -17,6 +19,13 @@ NodeController::NodeController(Node& m) :
 void NodeController::update(void*)
 {
 	mNeighbours = *(model->getNeighbours());
+
+	if (mNeighbours.size() == 0)
+		availableNeighbours = false;
+	else {
+		availableNeighbours = true;
+		currNeighbour = 0;
+	}
 }
 
 void NodeController::cycle()
@@ -99,4 +108,28 @@ void NodeController::returnButton()
 {
 	if (ImGui::Button("Return"))
 		cstate = OUT;
+}
+
+void NodeController::neighbourSelect()
+{
+	if (availableNeighbours == false) {
+		int curr = 0;
+		ImGui::Combo("Neighbour nodes -empty-", &curr, "\0");
+	}
+	else {
+		ImGui::Combo("Neighbour nodes", &currNeighbour, &comboGetter, this, mNeighbours.size());
+	}
+}
+
+
+
+bool NodeController::comboGetter(void* data, int idx, const char** out_str)
+{
+	NodeController& node = *(NodeController*)data;
+	string rta = node.mNeighbours[idx].ip + " - " + node.mNeighbours[idx].port;
+	strncpy(node.comboNeighbour, rta.c_str(), COMBO_SIZE);
+	node.comboNeighbour[COMBO_SIZE] = '\0';
+	*out_str = node.comboNeighbour;
+	return true;
+
 }

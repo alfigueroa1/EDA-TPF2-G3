@@ -2,6 +2,7 @@
 #include "observer.h"
 #include "Node.h"
 
+#define COMBO_SIZE	50
 enum controlState { OUT, PBLOCK, GBHEADER, PTX, PMBLOCK, PFILTER, ADDN };
 
 class NodeController :
@@ -16,7 +17,11 @@ private:
 
 	string mID;
 	string windowName;
+
 	vector<sSocket> mNeighbours;
+	bool availableNeighbours;
+	int currNeighbour;
+	char comboNeighbour[COMBO_SIZE + 1];
 
 	controlState cstate;
 	void drawOut();
@@ -28,6 +33,10 @@ private:
 	void drawAddNode();
 
 	void returnButton();
+	void neighbourSelect();
+
+	static bool comboGetter(void* data, int idx, const char** out_str);
+
 
 };
 
