@@ -9,6 +9,7 @@ typedef string ID;
 //ALEX WAS HERE:
 struct sSocket {
 	sSocket() : ip(), port() {}
+	sSocket(const string& _ip,const string& _port) : ip(_ip), port(_port) {}
 	string ip;
 	string port;
 };
@@ -23,7 +24,7 @@ public:
 	errorType postTransaction(unsigned int neighbourPos, Transaction tx);
 	errorType postMerkleBlock(unsigned int neighbourPos);		//Posts about last block in blockchain
 	errorType postFilter(unsigned int neighbourPos);
-	void AddNeighbour(string _ID, string _port);
+	void AddNeighbour(const string& _ID,const string& _port);
 
 	ID getID();
 	string getIP() { return IP; }

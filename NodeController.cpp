@@ -10,7 +10,7 @@
 
 NodeController::NodeController(Node& m) :
 	model(&m), mID(), mNeighbours(), cstate(OUT), windowName(), availableNeighbours(false),
-	currNeighbour(0), comboNeighbour()
+	currNeighbour(0), comboNeighbour(), newId(), newPort()
 {
 	mID = model->getID();
 	windowName = mID + "##node";
@@ -87,21 +87,36 @@ void NodeController::drawOut()
 
 void NodeController::drawPBlock() {
 	returnButton();
+	neighbourSelect();
 }
 void NodeController::drawGBHeader() {
 	returnButton();
+	neighbourSelect();
 }
 void NodeController::drawPTX() {
 	returnButton();
+	neighbourSelect();
 }
 void NodeController::drawPMBlock() {
 	returnButton();
+	neighbourSelect();
 }
 void NodeController::drawPFilter() {
 	returnButton();
+	neighbourSelect();
 }
 void NodeController::drawAddNode() {
 	returnButton();
+	ImGui::Text("\nADD A NEIGHBOUR\n\n");
+	newPortSelect();
+	newIpSelect();
+
+	if (ImGui::Button("ADD NEIGHBOUR")) {
+		string nIp = to_string(newId[0]) + '.' + to_string(newId[1]) + '.' + to_string(newId[2]) + '.' + to_string(newId[3]);
+		string nPort = to_string(newPort);
+		model->AddNeighbour(nIp,nPort);
+		cstate = OUT;
+	}
 }
 
 void NodeController::returnButton()
@@ -114,10 +129,12 @@ void NodeController::neighbourSelect()
 {
 	if (availableNeighbours == false) {
 		int curr = 0;
-		ImGui::Combo("Neighbour nodes -empty-", &curr, "\0");
+		ImGui::Text("Neighbour nodes -empty-");
+		ImGui::Combo("##Neighbour nodes -empty-", &curr, "\0");
 	}
 	else {
-		ImGui::Combo("Neighbour nodes", &currNeighbour, &comboGetter, this, mNeighbours.size());
+		ImGui::Text("Neighbour nodes");
+		ImGui::Combo("##Neighbour nodes", &currNeighbour, &comboGetter, this, mNeighbours.size());
 	}
 }
 
@@ -126,10 +143,31 @@ void NodeController::neighbourSelect()
 bool NodeController::comboGetter(void* data, int idx, const char** out_str)
 {
 	NodeController& node = *(NodeController*)data;
-	string rta = node.mNeighbours[idx].ip + " - " + node.mNeighbours[idx].port;
+	string rta = node.mNeighbours[idx].port + " - " + node.mNeighbours[idx].ip ;
 	strncpy(node.comboNeighbour, rta.c_str(), COMBO_SIZE);
 	node.comboNeighbour[COMBO_SIZE] = '\0';
 	*out_str = node.comboNeighbour;
 	return true;
 
+}
+
+void NodeController::newIpSelect()
+{
+	ImGui::Text("Neighbour IP:");
+	ImGui::PushItemWidth(25);
+	ImGui::DragInt(".##1", newId, 0.5);
+	ImGui::SameLine();
+	ImGui::DragInt(".##2", newId + 1, 0.5);
+	ImGui::SameLine();
+	ImGui::DragInt(".##3", newId + 2, 0.5);
+	ImGui::SameLine();
+	ImGui::DragInt("##4", newId + 3, 0.5);
+	ImGui::PopItemWidth();
+}
+
+void NodeController::newPortSelect()
+{
+	ImGui::Text("Neighbour Port:");
+	ImGui::SetNextItemWidth(50);
+	ImGui::DragInt("##Port", &newPort, 0.5);
 }

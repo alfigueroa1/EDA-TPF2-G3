@@ -33,9 +33,14 @@ private:
 	void drawAddNode();
 
 	void returnButton();
-	void neighbourSelect();
 
+	void neighbourSelect();
 	static bool comboGetter(void* data, int idx, const char** out_str);
+
+	int newId[4];
+	int newPort;
+	void newIpSelect();
+	void newPortSelect();
 
 
 };

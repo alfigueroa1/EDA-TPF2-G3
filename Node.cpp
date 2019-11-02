@@ -31,8 +31,9 @@ errorType Node::postFilter(unsigned int neighbourPos) {
 
 	return error;
 }
-void Node::AddNeighbour(string _ID, string _port) {
-
+void Node::AddNeighbour(const string& _IP,const string& _port) {	//ALEX!!!
+	neighbourhood.emplace_back(_IP,_port);
+	notifyAllObservers();
 }
 
 ID Node::getID() {			//ALEX
