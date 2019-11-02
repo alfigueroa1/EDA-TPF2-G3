@@ -57,6 +57,12 @@
     <ClCompile Include="blockChainModel.cpp">
       <Filter>Source Files\MVC</Filter>
     </ClCompile>
+    <ClCompile Include="EDANet.cpp">
+      <Filter>Source Files\MVC</Filter>
+    </ClCompile>
+    <ClCompile Include="Node.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="subject.h">
@@ -103,6 +109,15 @@
     </ClInclude>
     <ClInclude Include="blockChainModel.h">
       <Filter>Header Files\MVC</Filter>
+    </ClInclude>
+    <ClInclude Include="networking.h">
+      <Filter>Header Files\MVC</Filter>
+    </ClInclude>
+    <ClInclude Include="EDANet.h">
+      <Filter>Header Files\MVC</Filter>
+    </ClInclude>
+    <ClInclude Include="Node.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

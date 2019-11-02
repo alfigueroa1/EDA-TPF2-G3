@@ -136,6 +136,8 @@
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="blockChainModel.cpp" />
+    <ClCompile Include="EDANet.cpp" />
+    <ClCompile Include="Node.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="blockChain.h" />
@@ -151,6 +153,9 @@
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="blockChainModel.h" />
+    <ClInclude Include="EDANet.h" />
+    <ClInclude Include="networking.h" />
+    <ClInclude Include="Node.h" />
     <ClInclude Include="observer.h" />
     <ClInclude Include="subject.h" />
   </ItemGroup>
