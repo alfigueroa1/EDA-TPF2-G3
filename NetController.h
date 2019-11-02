@@ -4,6 +4,9 @@
 #include "EDANet.h"
 #include "NetViewer.h"
 
+#include "NodeController.h"
+#include "NodeViewer.h"
+
 #include "allegro5/allegro.h"
 #include "allegro5/allegro_primitives.h"
 #include "imgui.h"
@@ -15,7 +18,7 @@ class NetController :
 public:
 	NetController(EDANet& model);
 	~NetController();
-	virtual void update(void*) {}; //aqui crea nuevos modelos y controllers
+	virtual void update(void*); //aqui crea nuevos modelos y controllers
 	bool isRunning();
 	void cycle();
 private:
@@ -36,5 +39,8 @@ private:
 	char IDbuf[50];
 	int IParr[4];
 	int Port;
+
+	vector<NodeController> controllerlist;
+	vector<NodeViewer> viewerlist;
 };
 

@@ -12,7 +12,9 @@ NetController::NetController(EDANet& m) :
 	IParr(),
 	Port(),
 
-	viewer()
+	viewer(),
+	controllerlist(),
+	viewerlist()
 {
 	model->attach(viewer);
 	init_interface();
@@ -21,6 +23,24 @@ NetController::NetController(EDANet& m) :
 NetController::~NetController()
 {
 	close_interface();
+}
+
+void NetController::update(void*)
+{
+	size_t index = controllerlist.size();//index representa el indice de un teorico nuevo elemento (controller y viewer), que solo se creara si el modelo tiene un nodo nuevo
+
+	if (model->getNodeAmount() > index) {
+		Node* newNode = model->getNode(index);
+
+		controllerlist.emplace_back(*newNode);
+		viewerlist.emplace_back();
+
+		newNode->attach(controllerlist[index]);
+		newNode->attach(viewerlist[index]);
+
+		viewerlist[index].update(newNode); //seteo inicial de las variables mostradas por el viewer del nodo
+
+	}
 }
 
 bool NetController::isRunning()
@@ -33,6 +53,12 @@ void NetController::cycle()
 	start_frame();
 	
 	controlWindow();
+
+	for (int i = 0; i < controllerlist.size(); i++)
+		controllerlist[i].cycle();
+
+	for (int i = 0; i < viewerlist.size(); i++)
+		viewerlist[i].cycle();
 
 	end_frame();
 }
