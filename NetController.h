@@ -15,7 +15,7 @@ class NetController :
 public:
 	NetController(EDANet& model);
 	~NetController();
-	virtual void update(void*);
+	virtual void update(void*) {}; //aqui crea nuevos modelos y controllers
 	bool isRunning();
 	void cycle();
 private:
@@ -33,6 +33,8 @@ private:
 	void end_frame();
 
 	void controlWindow();
-
+	char IDbuf[50];
+	int IParr[4];
+	int Port;
 };
 

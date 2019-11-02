@@ -45,12 +45,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="blockChainFinder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="fileController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="imgui.cpp">
       <Filter>Source Files\ImGUI</Filter>
     </ClCompile>
@@ -65,9 +59,6 @@
     </ClCompile>
     <ClCompile Include="imgui_widgets.cpp">
       <Filter>Source Files\ImGUI</Filter>
-    </ClCompile>
-    <ClCompile Include="blockChainModel.cpp">
-      <Filter>Source Files\MVC</Filter>
     </ClCompile>
     <ClCompile Include="EDANet.cpp">
       <Filter>Source Files\MVC</Filter>
@@ -121,15 +112,6 @@
     </ClInclude>
     <ClInclude Include="imconfig_allegro5.h">
       <Filter>Header Files\ImGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="blockChain.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="blockChainFinder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="fileController.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="blockChainModel.h">
       <Filter>Header Files\MVC</Filter>

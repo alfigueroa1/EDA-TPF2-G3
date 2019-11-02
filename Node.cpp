@@ -7,27 +7,27 @@ Node::~Node() {
 
 }
 errorType Node::postBlock(unsigned int neighbourPos) {
-	errorType error;
+	errorType error(false);
 
 	return error;
 }
 errorType Node::getBlockHeader(unsigned int height, unsigned int neighbourPos) {
-	errorType error;
+	errorType error(false);
 
 	return error;
 }
 errorType Node::postTransaction(unsigned int neighbourPos, Transaction tx) {
-	errorType error;
+	errorType error(false);
 
 	return error;
 }
 errorType Node::postMerkleBlock(unsigned int neighbourPos) {
-	errorType error;
+	errorType error(false);
 
 	return error;
 }
 errorType Node::postFilter(unsigned int neighbourPos) {
-	errorType error;
+	errorType error(false);
 
 	return error;
 }

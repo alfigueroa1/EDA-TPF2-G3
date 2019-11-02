@@ -8,6 +8,10 @@ NetController::NetController(EDANet& m) :
 	display(nullptr), queue(nullptr),
 	backColor(0.f,0.75f,0.75f,1.f),
 
+	IDbuf(),
+	IParr(),
+	Port(),
+
 	viewer()
 {
 	model->attach(viewer);
@@ -29,7 +33,6 @@ void NetController::cycle()
 	start_frame();
 	
 	controlWindow();
-	viewer.cycle();
 
 	end_frame();
 }
@@ -91,4 +94,43 @@ void NetController::end_frame()
 	al_clear_to_color(al_map_rgba_f(backColor.x, backColor.y, backColor.z, backColor.w));
 	ImGui_ImplAllegro5_RenderDrawData(ImGui::GetDrawData());
 	al_flip_display();
+}
+
+void NetController::controlWindow()
+{
+	ImGui::Begin("EDANet",&running);
+
+	ImGui::Text("Bienvenidos a la fase 2 del TP Integrador de EDA.");
+	ImGui::Text("El controller se encarga de la interfaz presente en Add Nodes (input del usuario):");
+
+	if (ImGui::CollapsingHeader("Add nodes")) {
+
+		ImGui::SetNextItemWidth(250);
+		ImGui::InputTextWithHint("Node ID", "enter ID (\"name\" of the node) here", IDbuf, sizeof(IDbuf) - 1);
+
+		ImGui::SetNextItemWidth(50);
+		ImGui::DragInt("Port", &Port, 0.5);
+
+		ImGui::PushItemWidth(25);
+		ImGui::DragInt(".##1", IParr, 0.5);
+		ImGui::SameLine();
+		ImGui::DragInt(".##2", IParr+1, 0.5);
+		ImGui::SameLine();
+		ImGui::DragInt(".##3", IParr+2, 0.5);
+		ImGui::SameLine();
+		ImGui::DragInt("Node IP##4", IParr+3, 0.5);
+		ImGui::PopItemWidth();
+
+		if (ImGui::Button("Create Node")) {
+			string sID = string(IDbuf);
+			string sPort = to_string(Port);
+			string sIP = to_string(IParr[0]) + '.' + to_string(IParr[1]) + '.' + to_string(IParr[2]) + '.' + to_string(IParr[3]);
+			model->createNode(sIP, sPort, sID);
+		}
+	}
+
+	
+	ImGui::Text("El viewer se encarga de mostrar la informacion de la EDANet (cantidad de nodos actuales)");
+	viewer.draw();
+	ImGui::End();
 }
