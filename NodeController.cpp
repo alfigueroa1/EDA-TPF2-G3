@@ -10,10 +10,12 @@
 
 NodeController::NodeController(Node& m) :
 	model(&m), mID(), mNeighbours(), cstate(OUT), windowName(), availableNeighbours(false),
-	currNeighbour(0), comboNeighbour(), newId(), newPort()
+	currNeighbour(0), comboNeighbour(), newId(), newPort(), nIp(), nPort()
 {
 	mID = model->getID();
 	windowName = mID + "##node";
+
+	update(model);
 }
 
 void NodeController::update(void*)
@@ -112,8 +114,8 @@ void NodeController::drawAddNode() {
 	newIpSelect();
 
 	if (ImGui::Button("ADD NEIGHBOUR")) {
-		string nIp = to_string(newId[0]) + '.' + to_string(newId[1]) + '.' + to_string(newId[2]) + '.' + to_string(newId[3]);
-		string nPort = to_string(newPort);
+		nIp = to_string(newId[0]) + '.' + to_string(newId[1]) + '.' + to_string(newId[2]) + '.' + to_string(newId[3]);
+		nPort = to_string(newPort);
 		model->AddNeighbour(nIp,nPort);
 		cstate = OUT;
 	}

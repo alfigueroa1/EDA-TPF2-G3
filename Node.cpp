@@ -1,7 +1,7 @@
 #include "Node.h"
 
-Node::Node(string _ID) : myID(_ID) {
-
+Node::Node(string _ID, string _port, string _IP) : myID(_ID), IP(_IP) {
+	port = stoi(_port);
 }
 Node::~Node() {
 

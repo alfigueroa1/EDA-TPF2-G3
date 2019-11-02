@@ -18,7 +18,7 @@ bool EDANet::createNode(const string& IP, const string& port, const string& ID)	
 	cout << "Port:" << port << endl;
 	cout << "ID: " << ID << endl;
 
-	nodes.emplace_back(ID);
+	nodes.emplace_back(ID, port, IP);
 	
 
 	notifyAllObservers();

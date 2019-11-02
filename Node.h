@@ -17,7 +17,7 @@ struct sSocket {
 
 class Node : public Subject {
 public:
-	Node(string _ID);		//ALEX
+	Node(string _ID, string _port, string _IP);		//ALEX
 	~Node();
 	errorType postBlock(unsigned int neighbourPos);
 	errorType getBlockHeader(unsigned int height, unsigned int neighbourPos);

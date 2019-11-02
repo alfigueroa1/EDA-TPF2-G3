@@ -41,6 +41,8 @@ private:
 	int newPort;
 	void newIpSelect();
 	void newPortSelect();
+	string nIp;
+	string nPort;
 
 
 };

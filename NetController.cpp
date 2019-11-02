@@ -39,7 +39,6 @@ void NetController::update(void*)
 		newNode->attach(viewerlist[index]);
 
 		viewerlist[index].update(newNode); //seteo inicial de las variables mostradas por el viewer del nodo
-
 	}
 }
 
