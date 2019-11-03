@@ -28,6 +28,12 @@ public:
 	
 private:
 	void addBlock(Block block);
+	string createJsonBlock(Block block);
+	string createJsonTx();
+	string createJsonMerkleBlock();
+	string createJsonFilter(void);
+
+	string ID;
 	string IP;
 	unsigned int port;
 	BlockChain chain;

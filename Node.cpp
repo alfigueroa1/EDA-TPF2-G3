@@ -6,7 +6,8 @@ Node::Node() {
 Node::~Node() {
 
 }
-errorType Node::postBlock(unsigned int neighbourPos) {
+errorType Node::postBlock(unsigned int neighbourPos) 
+{
 	errorType error;
 
 	return error;
