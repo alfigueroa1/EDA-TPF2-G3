@@ -2,8 +2,14 @@
 
 #include "imgui.h"
 
-#define CHILD_W	220
+#define CHILD_W	300
 #define CHILD_H	330
+
+#define CCHILD_W (CHILD_W-40)
+#define CCHILD_H 200
+
+#define VCHILD_W (CCHILD_W-40)
+#define VCHILD_H 100
 
 NodeViewer::NodeViewer() : neigbours(), tx(), filters(), id(), windowName()
 {
@@ -15,6 +21,7 @@ void NodeViewer::update(void* n)
 	id = node->getID();
 	neigbours = *(node->getNeighbours());
 	filters = *(node->getFilters());
+	tx = *(node->getTransactions());
 
 	windowName = id + "##node";
 
@@ -65,12 +72,40 @@ void NodeViewer::showFilters()
 void NodeViewer::showTx() {
 	if (ImGui::CollapsingHeader("Transactions")) {
 		if (tx.size() > 0) {
+			ImGui::Text(" ");
+			ImGui::SameLine();
+			ImGui::BeginChild("Txs",ImVec2(CCHILD_W,CCHILD_H));
 			for (int i = 0; i < tx.size(); i++) {
 				string subWindowName = tx[i].txId + "##" + to_string(i);
 				if (ImGui::CollapsingHeader(subWindowName.c_str())) {
-					ImGui::Text(tx[i].txId.c_str());
+					ImGui::Text("ID: %s",tx[i].txId.c_str());
+
+					ImGui::Text("Number of incomes: %u",tx[i].nTxIn);
+					ImGui::Text(" ");
+					ImGui::SameLine();
+					string vinwindow = "vins##" + to_string(i);
+					ImGui::BeginChild(vinwindow.c_str(),ImVec2(VCHILD_W,VCHILD_H),false,ImGuiWindowFlags_HorizontalScrollbar|ImGuiWindowFlags_AlwaysVerticalScrollbar);
+					if (ImGui::CollapsingHeader("vIn")) {
+						for (int j = 0; j < tx[i].vIn.size(); j++) {
+							ImGui::Text("Block ID: %s\tTx ID: %s",tx[i].vIn[j].blockId.c_str(), tx[i].vIn[j].txId.c_str());
+						}
+					}
+					ImGui::EndChild();
+
+					ImGui::Text("Number of outcomes: %u", tx[i].nTxOut);
+					ImGui::Text(" ");
+					ImGui::SameLine();
+					string voutwindow = "vout##" + to_string(i);
+					ImGui::BeginChild(voutwindow.c_str(), ImVec2(VCHILD_W, VCHILD_H),false, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
+					if (ImGui::CollapsingHeader("vOut")) {
+						for (int j = 0; j < tx[i].vOut.size(); j++) {
+							ImGui::Text("Public ID: %s\tTx Amount: %lu", tx[i].vOut[j].publicId.c_str(), tx[i].vOut[j].amount);
+						}
+					}
+					ImGui::EndChild();
 				}
 			}
+			ImGui::EndChild();
 		}
 		else {
 			ImGui::Text("No transactions available");

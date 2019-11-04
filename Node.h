@@ -45,6 +45,7 @@ public:
 	void debugTx(const Transaction& TX) {
 		txs.emplace_back(TX);
 		notifyAllObservers();
+
 	}
 
 	
