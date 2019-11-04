@@ -32,7 +32,7 @@ void NetController::update(void*)
 	if (model->getNodeAmount() > index) {
 		Node* newNode = model->getNode(index);
 
-		controllerlist.emplace_back(*newNode);
+		controllerlist.emplace_back(*newNode); //testing push/emplace
 		viewerlist.emplace_back();
 
 		newNode->attach(controllerlist[index]);

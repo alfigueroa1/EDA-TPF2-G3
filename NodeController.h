@@ -44,6 +44,7 @@ private:
 	string nIp;
 	string nPort;
 
+	int bheaderHeight;
 
 };
 

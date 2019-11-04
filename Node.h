@@ -3,6 +3,9 @@
 #include "subject.h"
 #include "blockChain.h"
 
+#include <iostream>
+using namespace std;
+
 typedef bool errorType;
 typedef string ID;
 
@@ -48,4 +51,11 @@ private:
 	vector<sSocket>* neighbourhood; //punteros
 	vector<string> filters;
 	vector<Transaction> txs;
+
+
+
+	// solo para evitar su uso
+public:
+	Node& operator=(Node& n) = delete;
+	//Node(Node& n);
 };

@@ -10,7 +10,8 @@
 
 NodeController::NodeController(Node& m) :
 	model(&m), mID(), mNeighbours(), cstate(OUT), windowName(), availableNeighbours(false),
-	currNeighbour(0), comboNeighbour(), newId(), newPort(), nIp(), nPort()
+	currNeighbour(0), comboNeighbour(), newId(), newPort(), nIp(), nPort(),
+	bheaderHeight(0)
 {
 	mID = model->getID();
 	windowName = mID + "##node";
@@ -89,23 +90,93 @@ void NodeController::drawOut()
 
 void NodeController::drawPBlock() {
 	returnButton();
+	ImGui::Text("\nPOST LAST BLOCK\n\n");
 	neighbourSelect();
+
+	if(availableNeighbours){
+
+		if (ImGui::Button("POST BLOCK")) {
+			model->postBlock(currNeighbour);
+			cstate = OUT;
+		}
+	}
+	else {
+		ImGui::Text("No neighbours available");
+	}
 }
 void NodeController::drawGBHeader() {
 	returnButton();
+	ImGui::Text("\nGET A BLOCK HEADER\n\n");
 	neighbourSelect();
+	ImGui::SetNextItemWidth(100);
+	ImGui::InputInt("##bhInt", &bheaderHeight);
+
+	if (availableNeighbours) {
+
+		if (ImGui::Button("GET BLOCK HEADER")) {
+			model->getBlockHeader(bheaderHeight, currNeighbour);
+			cstate = OUT;
+		}
+
+	}
+	else {
+		ImGui::Text("No neighbours available");
+	}
+
 }
 void NodeController::drawPTX() {
 	returnButton();
+
+	ImGui::Text("\nPOST A (dummy) TRANSACTION\n\n");
 	neighbourSelect();
+
+	if (availableNeighbours) {
+
+		if (ImGui::Button("POST TRANSACTION")) {
+			model->postTransaction(currNeighbour, dummyTX);
+			cstate = OUT;
+		}
+
+	}
+	else {
+		ImGui::Text("No neighbours available");
+	}
 }
 void NodeController::drawPMBlock() {
 	returnButton();
+	ImGui::Text("\nPOST LAST BLOCK's MERKLE BLOCK\n\n");
 	neighbourSelect();
+
+	if (availableNeighbours) {
+
+		if (ImGui::Button("POST MERKLE BLOCK")) {
+			model->postMerkleBlock(currNeighbour);
+			cstate = OUT;
+		}
+
+	}
+	else {
+		ImGui::Text("No neighbours available");
+	}
+
 }
 void NodeController::drawPFilter() {
 	returnButton();
+	ImGui::Text("\nPOST OWN FILTER\n\n");
 	neighbourSelect();
+
+	if (availableNeighbours) {
+
+		if (ImGui::Button("POST FILTER")) {
+			model->postFilter(currNeighbour);
+			cstate = OUT;
+		}
+
+	}
+	else {
+		ImGui::Text("No neighbours available");
+	}
+
 }
 void NodeController::drawAddNode() {
 	returnButton();
