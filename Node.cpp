@@ -1,10 +1,17 @@
 #include "Node.h"
 
-Node::Node(string _ID, string _port, string _IP) : myID(_ID), IP(_IP) {
+Node::Node(string _ID, string _port, string _IP) { //constructor modificado para trabajar con punteros
 	port = stoi(_port);
-}
-Node::~Node() {
+	myID = new string(40,' ');
+	IP = new string(40,' ');
+	*myID = _ID;
+	*IP = _IP;
 
+	neighbourhood = new vector<sSocket>; // no se q demonios hacer
+}
+Node::~Node() { // igual el destructor
+	delete myID;
+	delete IP;
 }
 errorType Node::postBlock(unsigned int neighbourPos) {
 	errorType error(false);
@@ -31,13 +38,13 @@ errorType Node::postFilter(unsigned int neighbourPos) {
 
 	return error;
 }
-void Node::AddNeighbour(const string& _IP,const string& _port) {	//ALEX!!!
-	neighbourhood.emplace_back(_IP,_port);
+void Node::AddNeighbour(const string& _IP,const string& _port) {	//ALEX!!!	//punteros
+	neighbourhood->emplace_back(_IP,_port);
 	notifyAllObservers();
 }
 
-ID Node::getID() {			//ALEX
-	return myID;
+ID Node::getID() {			//ALEX //punteros
+	return *myID;
 }
 void keepListening() {
 

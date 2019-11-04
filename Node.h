@@ -9,7 +9,8 @@ typedef string ID;
 //ALEX WAS HERE:
 struct sSocket {
 	sSocket() : ip(), port() {}
-	sSocket(const string& _ip,const string& _port) : ip(_ip), port(_port) {}
+	sSocket(const string& _ip, const string& _port) : ip(_ip), port(_port) {}
+	//sSocket(size_t s, char c, size_t s2, char c2) : ip(s,c),port(s2,c2){}	//punteros
 	string ip;
 	string port;
 };
@@ -27,24 +28,24 @@ public:
 	void AddNeighbour(const string& _ID,const string& _port);
 
 	ID getID();
-	string getIP() { return IP; }
+	string getIP() { return *IP; } //punteros
 	string getPort() { return to_string(port); }
-	const vector<sSocket>* getNeighbours() { return &neighbourhood; }; //ALEX WAS HERE AGAIN
+	const vector<sSocket>* getNeighbours() { return neighbourhood; }; //ALEX WAS HERE AGAIN //punteros
 	const vector<Transaction>* getTransactions() { return &txs; };
 	const vector<string>* getFilters() { return &filters; };
 	void keepListening();
 	void keepSending();
 	
 private:
-	string myID;			//ALEX
+	string* myID;			//ALEX //punterros
 	void addBlock(Block block);
-	string IP;
+	string* IP; //punteros
 	unsigned int port;
 	BlockChain chain;
 	//Server
 	//Client vector
 	vector<BlockChain> dummieChain;
-	vector<sSocket> neighbourhood;
+	vector<sSocket>* neighbourhood; //punteros
 	vector<string> filters;
 	vector<Transaction> txs;
 };
