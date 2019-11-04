@@ -11,14 +11,28 @@ using namespace std;
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  *****************************************************************************/
 struct Vin{
+	Vin(const Vin& v) :
+		blockId(v.blockId), txId(v.txId){}
 	string blockId;
 	string txId;
 };
 struct Vout{
+	Vout(const Vout& v) :
+		publicId(v.publicId),amount(v.amount) {}
 	string publicId;
 	unsigned long int amount;
 };
 struct Transaction{
+	Transaction(const Transaction&t) :
+		txId(t.txId), nTxIn(t.nTxIn),nTxOut(t.nTxOut),
+		vIn(t.vIn),vOut(t.vOut){}
+	Transaction() :
+		txId(), nTxIn(), nTxOut(),
+		vIn(), vOut() {}
+	Transaction(const string& id,unsigned long int& in,
+		vector<Vin>& _vin, unsigned long int& out,
+		vector<Vout>& _vout):
+		txId(id),nTxIn(in),vIn(_vin),nTxOut(out),vOut(_vout){}
 	string txId;
 	unsigned long int nTxIn;
 	vector<Vin> vIn;
@@ -28,8 +42,10 @@ struct Transaction{
 
 
 
-//DUMMY TX
-const Transaction dummyTX = { "DUMMY TX",2,{{"BLOCK ID 1","TX ID 1"},{"BLOCK ID 2","TX ID 2"}},3,{{"ALE",20},{"GIAN",30},{"OLI",40}} };
+//DUMMY TX //terminar constructores...
+const string dummy_txId = "DUMMY TX";
+const vector<Vin> dummyIn( {"BLOCK ID 1","TX ID 1"},{"BLOCK ID 2","TX ID 2"} );
+const Transaction dummyTX = { dummy_txId,2,,3,{{"ALE",20},{"GIAN",30},{"OLI",40}} };
 
 
 

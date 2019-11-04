@@ -33,10 +33,13 @@ void NodeController::update(void*)
 
 void NodeController::cycle()
 {
+	// DEBUG
+
 	ImGui::Begin(windowName.c_str());
 	ImGui::BeginChild("CONTROL",ImVec2(CHILD_W,CHILD_H));
 	switch (cstate) {
 	case OUT:
+		debugTx();
 		drawOut();
 		break;
 	case PBLOCK:
@@ -243,4 +246,10 @@ void NodeController::newPortSelect()
 	ImGui::Text("Neighbour Port:");
 	ImGui::SetNextItemWidth(50);
 	ImGui::DragInt("##Port", &newPort, 0.5);
+}
+
+void NodeController::debugTx()
+{
+	if(ImGui::Button("DEBUG TX"))
+		model->debugTx(dummyTX);
 }

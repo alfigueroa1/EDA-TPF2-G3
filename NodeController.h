@@ -46,5 +46,9 @@ private:
 
 	int bheaderHeight;
 
+
+	// DEBUG
+	void debugTx();
+
 };
 

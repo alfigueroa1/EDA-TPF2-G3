@@ -13,6 +13,7 @@ typedef string ID;
 struct sSocket {
 	sSocket() : ip(), port() {}
 	sSocket(const string& _ip, const string& _port) : ip(_ip), port(_port) {}
+	sSocket& operator=(const sSocket& s) { ip = s.ip; port = s.port; return *this; }
 	//sSocket(size_t s, char c, size_t s2, char c2) : ip(s,c),port(s2,c2){}	//punteros
 	string ip;
 	string port;
@@ -38,6 +39,14 @@ public:
 	const vector<string>* getFilters() { return &filters; };
 	void keepListening();
 	void keepSending();
+
+
+	//DEBUG
+	void debugTx(const Transaction& TX) {
+		txs.emplace_back(TX);
+		notifyAllObservers();
+	}
+
 	
 private:
 	string* myID;			//ALEX //punterros
