@@ -137,7 +137,11 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="blockChainModel.cpp" />
     <ClCompile Include="EDANet.cpp" />
+    <ClCompile Include="NetController.cpp" />
+    <ClCompile Include="NetViewer.cpp" />
     <ClCompile Include="Node.cpp" />
+    <ClCompile Include="NodeController.cpp" />
+    <ClCompile Include="NodeViewer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="blockChain.h" />
@@ -154,8 +158,12 @@
     <ClInclude Include="json.hpp" />
     <ClInclude Include="blockChainModel.h" />
     <ClInclude Include="EDANet.h" />
+    <ClInclude Include="NetController.h" />
+    <ClInclude Include="NetViewer.h" />
     <ClInclude Include="networking.h" />
     <ClInclude Include="Node.h" />
+    <ClInclude Include="NodeController.h" />
+    <ClInclude Include="NodeViewer.h" />
     <ClInclude Include="observer.h" />
     <ClInclude Include="subject.h" />
   </ItemGroup>

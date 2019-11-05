@@ -1,6 +1,6 @@
 #include "Node.h"
 
-Node::Node() {
+Node::Node(string _ID, string _port, string _IP) {
 
 }
 Node::~Node() {
@@ -31,8 +31,9 @@ errorType Node::postFilter(unsigned int neighbourPos) {
 
 	return error;
 }
-void Node::AddNeighbour(string _ID, string _port) {
 
+void Node::AddNeighbour(const string& _ID, const string& _port)
+{
 }
 
 ID Node::getID() {
