@@ -17,7 +17,8 @@ NetController::NetController(EDANet& m) :
 
 	viewer(),
 	controllerlist(),
-	viewerlist()
+	viewerlist(),
+	whandler("Main Warnings")
 {
 	model->attach(viewer);
 	init_interface();
@@ -70,6 +71,8 @@ void NetController::cycle()
 
 	for (int i = 0; i < viewerlist.size(); i++)
 		viewerlist[i]->cycle();
+
+	whandler.draw();
 
 	end_frame();
 }
@@ -162,7 +165,7 @@ void NetController::controlWindow()
 			string sID = string(IDbuf);
 			string sPort = to_string(Port);
 			string sIP = to_string(IParr[0]) + '.' + to_string(IParr[1]) + '.' + to_string(IParr[2]) + '.' + to_string(IParr[3]);
-			model->createNode(sIP, sPort, sID);
+			whandler.check( model->createNode(sIP, sPort, sID));
 		}
 	}
 

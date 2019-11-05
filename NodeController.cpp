@@ -11,7 +11,7 @@
 NodeController::NodeController(Node& m) :
 	model(&m), mID(), mNeighbours(), cstate(OUT), windowName(), availableNeighbours(false),
 	currNeighbour(0), comboNeighbour(), newId(), newPort(), nIp(), nPort(),
-	bheaderHeight(0)
+	bheaderHeight(0), whandler(m.getID())
 {
 	mID = model->getID();
 	windowName = mID + "##node";
@@ -63,6 +63,8 @@ void NodeController::cycle()
 	}
 	ImGui::EndChild();
 	ImGui::End();
+
+	whandler.draw();
 }
 
 void NodeController::drawOut()
@@ -99,7 +101,7 @@ void NodeController::drawPBlock() {
 	if(availableNeighbours){
 
 		if (ImGui::Button("POST BLOCK")) {
-			model->postBlock(currNeighbour);
+			whandler.check( model->postBlock(currNeighbour));
 			cstate = OUT;
 		}
 	}
@@ -117,7 +119,7 @@ void NodeController::drawGBHeader() {
 	if (availableNeighbours) {
 
 		if (ImGui::Button("GET BLOCK HEADER")) {
-			model->getBlockHeader(bheaderHeight, currNeighbour);
+			whandler.check(model->getBlockHeader(bheaderHeight, currNeighbour));
 			cstate = OUT;
 		}
 
@@ -136,7 +138,7 @@ void NodeController::drawPTX() {
 	if (availableNeighbours) {
 
 		if (ImGui::Button("POST TRANSACTION")) {
-			model->postTransaction(currNeighbour, dummyTX);
+			whandler.check(model->postTransaction(currNeighbour, dummyTX));
 			cstate = OUT;
 		}
 
@@ -153,7 +155,7 @@ void NodeController::drawPMBlock() {
 	if (availableNeighbours) {
 
 		if (ImGui::Button("POST MERKLE BLOCK")) {
-			model->postMerkleBlock(currNeighbour);
+			whandler.check(model->postMerkleBlock(currNeighbour));
 			cstate = OUT;
 		}
 
@@ -171,7 +173,7 @@ void NodeController::drawPFilter() {
 	if (availableNeighbours) {
 
 		if (ImGui::Button("POST FILTER")) {
-			model->postFilter(currNeighbour);
+			whandler.check(model->postFilter(currNeighbour));
 			cstate = OUT;
 		}
 
@@ -190,7 +192,7 @@ void NodeController::drawAddNode() {
 	if (ImGui::Button("ADD NEIGHBOUR")) {
 		nIp = to_string(newId[0]) + '.' + to_string(newId[1]) + '.' + to_string(newId[2]) + '.' + to_string(newId[3]);
 		nPort = to_string(newPort);
-		model->AddNeighbour(nIp,nPort);
+		whandler.check(model->AddNeighbour(nIp,nPort));
 		cstate = OUT;
 	}
 }
@@ -247,6 +249,8 @@ void NodeController::newPortSelect()
 	ImGui::SetNextItemWidth(50);
 	ImGui::DragInt("##Port", &newPort, 0.5);
 }
+
+
 
 void NodeController::debugTx()
 {

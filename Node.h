@@ -2,11 +2,11 @@
 
 #include "subject.h"
 #include "blockChain.h"
+#include "errorType.h"
 
 #include <iostream>
 using namespace std;
 
-typedef bool errorType;
 typedef string ID;
 
 //ALEX WAS HERE:
@@ -29,7 +29,7 @@ public:
 	errorType postTransaction(unsigned int neighbourPos, Transaction tx);
 	errorType postMerkleBlock(unsigned int neighbourPos);		//Posts about last block in blockchain
 	errorType postFilter(unsigned int neighbourPos);
-	void AddNeighbour(const string& _ID,const string& _port);
+	errorType AddNeighbour(const string& _ID,const string& _port);
 
 	ID getID();
 	string getIP() { return *IP; } //punteros

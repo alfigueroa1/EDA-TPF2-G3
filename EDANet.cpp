@@ -11,21 +11,30 @@ EDANet::~EDANet() {
 		delete nodes[i];
 }
 
-bool EDANet::createNode(const string& IP, const string& port, const string& ID)	//ALEX
+errorType EDANet::createNode(const string& IP, const string& port, const string& ID)	//ALEX
 {
-	bool ret(true);
+	errorType err;
+	err.error = false;
+	err.datos = "";
 
-	cout << "IP: " << IP << endl;
-	cout << "Port:" << port << endl;
-	cout << "ID: " << ID << endl;
+	if (existAlready(ID) == false ) {
 
-	Node* newNode = new Node(ID,port,IP);
+		cout << "IP: " << IP << endl;
+		cout << "Port:" << port << endl;
+		cout << "ID: " << ID << endl;
 
-	nodes.emplace_back(newNode);
-	
-	notifyAllObservers();
+		Node* newNode = new Node(ID, port, IP);
 
-	return ret;
+		nodes.emplace_back(newNode);
+
+		notifyAllObservers();
+	}
+	else {
+		err.error = true;
+		err.datos = "YA EXISTE UN NODO CON ESA ID";
+	}
+
+	return err;
 }
 
 Node* EDANet::getNode(unsigned int nodePos) //la hice por el mero hecho de poder probar mis clases
@@ -33,5 +42,17 @@ Node* EDANet::getNode(unsigned int nodePos) //la hice por el mero hecho de poder
 	Node* rta = nullptr;
 	if (nodePos < nodes.size() && nodePos >= 0)
 		rta = nodes[nodePos];
+	return rta;
+}
+
+bool EDANet::existAlready(const string& _id)
+{
+	bool rta = false;
+
+	for (int i = 0; (rta == false) && (i < nodes.size()); i++) {
+		if (_id == nodes[i]->getID())
+			rta = true;
+	}
+
 	return rta;
 }
