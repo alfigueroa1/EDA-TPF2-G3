@@ -3,6 +3,9 @@
 #define SCREEN_WIDTH	1280
 #define	SCREEN_HEIGHT	720
 
+#define WIN_W 600
+#define WIN_H 300
+
 NetController::NetController(EDANet& m) :
 	model(&m), running(true),
 	display(nullptr), queue(nullptr),
@@ -22,6 +25,12 @@ NetController::NetController(EDANet& m) :
 
 NetController::~NetController()
 {
+	for (int i = 0; i < controllerlist.size(); i++) {
+		delete controllerlist[i];
+	}
+	for (int i = 0; i < viewerlist.size(); i++) {
+		delete viewerlist[i];
+	}
 	close_interface();
 }
 
@@ -32,13 +41,16 @@ void NetController::update(void*)
 	if (model->getNodeAmount() > index) {
 		Node* newNode = model->getNode(index);
 
-		controllerlist.emplace_back(*newNode); //testing push/emplace
-		viewerlist.emplace_back();
+		NodeController* newcontrol = new NodeController(*newNode);
+		NodeViewer* newviewer = new NodeViewer();
 
-		newNode->attach(controllerlist[index]);
-		newNode->attach(viewerlist[index]);
+		controllerlist.emplace_back(newcontrol); //testing push/emplace
+		viewerlist.emplace_back(newviewer);
 
-		viewerlist[index].update(newNode); //seteo inicial de las variables mostradas por el viewer del nodo
+		newNode->attach(*(controllerlist[index]));
+		newNode->attach(*(viewerlist[index]));
+
+		viewerlist[index]->update(newNode); //seteo inicial de las variables mostradas por el viewer del nodo
 	}
 }
 
@@ -54,10 +66,10 @@ void NetController::cycle()
 	controlWindow();
 
 	for (int i = 0; i < controllerlist.size(); i++)
-		controllerlist[i].cycle();
+		controllerlist[i]->cycle();
 
 	for (int i = 0; i < viewerlist.size(); i++)
-		viewerlist[i].cycle();
+		viewerlist[i]->cycle();
 
 	end_frame();
 }
@@ -123,7 +135,7 @@ void NetController::end_frame()
 
 void NetController::controlWindow()
 {
-	ImGui::Begin("EDANet",&running);
+	ImGui::Begin("EDANet",&running,ImVec2(WIN_W,WIN_H));
 
 	ImGui::Text("Bienvenidos a la fase 2 del TP Integrador de EDA.");
 	ImGui::Text("El controller se encarga de la interfaz presente en Add Nodes (input del usuario):");

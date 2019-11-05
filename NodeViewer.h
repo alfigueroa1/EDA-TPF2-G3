@@ -11,11 +11,14 @@ public:
 	void cycle();
 private:
 	string id;
+	string port;
+	string ip;
 	string windowName;
 	vector<sSocket> neigbours;
 	vector<Transaction> tx;
 	vector<string> filters;
 
+	void showData();
 	void showNeighbours();
 	void showTx();
 	void showFilters();

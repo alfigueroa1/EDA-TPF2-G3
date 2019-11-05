@@ -11,7 +11,8 @@
 #define VCHILD_W (CCHILD_W-40)
 #define VCHILD_H 100
 
-NodeViewer::NodeViewer() : neigbours(), tx(), filters(), id(), windowName()
+NodeViewer::NodeViewer() : neigbours(), tx(), filters(), id(), windowName(),
+	ip(), port()
 {
 }
 
@@ -19,6 +20,8 @@ void NodeViewer::update(void* n)
 {
 	Node* node = (Node*)n;
 	id = node->getID();
+	ip = node->getIP();
+	port = node->getPort();
 	neigbours = *(node->getNeighbours());
 	filters = *(node->getFilters());
 	tx = *(node->getTransactions());
@@ -33,12 +36,22 @@ void NodeViewer::cycle()
 	ImGui::SameLine();
 	ImGui::BeginChild("VIEW", ImVec2(CHILD_W, CHILD_H));
 
+	showData();
 	showNeighbours();
 	showTx();
 	showFilters();
 
 	ImGui::EndChild();
 	ImGui::End();
+}
+
+void NodeViewer::showData()
+{
+	if (ImGui::CollapsingHeader("Data")) {
+		ImGui::Text("ID: %s",id.c_str());
+		ImGui::Text("Port: %s",port.c_str());
+		ImGui::Text("IP: %s", ip.c_str());
+	}
 }
 
 void NodeViewer::showNeighbours()

@@ -7,7 +7,8 @@ EDANet::EDANet() {
 
 }
 EDANet::~EDANet() {
-
+	for (int i = 0; i < nodes.size(); i++)
+		delete nodes[i];
 }
 
 bool EDANet::createNode(const string& IP, const string& port, const string& ID)	//ALEX
@@ -18,9 +19,10 @@ bool EDANet::createNode(const string& IP, const string& port, const string& ID)	
 	cout << "Port:" << port << endl;
 	cout << "ID: " << ID << endl;
 
-	nodes.emplace_back(ID, port, IP);
-	
+	Node* newNode = new Node(ID,port,IP);
 
+	nodes.emplace_back(newNode);
+	
 	notifyAllObservers();
 
 	return ret;
@@ -30,6 +32,6 @@ Node* EDANet::getNode(unsigned int nodePos) //la hice por el mero hecho de poder
 {
 	Node* rta = nullptr;
 	if (nodePos < nodes.size() && nodePos >= 0)
-		rta = &nodes[nodePos];
+		rta = nodes[nodePos];
 	return rta;
 }

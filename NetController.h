@@ -40,7 +40,7 @@ private:
 	int IParr[4];
 	int Port;
 
-	vector<NodeController> controllerlist;
-	vector<NodeViewer> viewerlist;
+	vector<NodeController *> controllerlist;
+	vector<NodeViewer *> viewerlist;
 };
 

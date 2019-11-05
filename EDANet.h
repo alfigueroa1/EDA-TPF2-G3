@@ -13,5 +13,5 @@ public:
 	Node* getNode(unsigned int nodePos); //Hecha por Alex
 
 private:
-	vector<Node> nodes;
+	vector<Node *> nodes;
 };
