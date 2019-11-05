@@ -12,6 +12,8 @@
 #include "imgui.h"
 #include "imgui_impl_allegro5.h"
 
+#include "WarningWindowHandler.h"
+
 class NetController :
 	public Observer
 {
@@ -40,7 +42,9 @@ private:
 	int IParr[4];
 	int Port;
 
-	vector<NodeController *> controllerlist;
-	vector<NodeViewer *> viewerlist;
+	vector<NodeController*> controllerlist;
+	vector<NodeViewer*> viewerlist;
+
+	WarningWindowHandler whandler;
 };
 

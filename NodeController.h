@@ -1,6 +1,7 @@
 #pragma once
 #include "observer.h"
 #include "Node.h"
+#include "WarningWindowHandler.h"
 
 #define COMBO_SIZE	50
 enum controlState { OUT, PBLOCK, GBHEADER, PTX, PMBLOCK, PFILTER, ADDN };
@@ -46,6 +47,7 @@ private:
 
 	int bheaderHeight;
 
+	WarningWindowHandler whandler;
 
 	// DEBUG
 	void debugTx();

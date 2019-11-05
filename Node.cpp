@@ -33,8 +33,10 @@ errorType Node::postFilter(unsigned int neighbourPos) {
 	return error;
 }
 
-void Node::AddNeighbour(const string& _ID, const string& _port)
+errorType Node::AddNeighbour(const string& _ID, const string& _port)
 {
+	errorType error;
+	return error;
 }
 
 ID Node::getID() {
