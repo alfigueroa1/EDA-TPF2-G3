@@ -28,6 +28,18 @@
     <Filter Include="Header Files\ImGUI">
       <UniqueIdentifier>{317b12ce-a9ec-4fe3-91fc-92a09fb85c5e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Controllers">
+      <UniqueIdentifier>{310dc3c2-e6a1-43d4-af52-da4574fdad6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Controllers">
+      <UniqueIdentifier>{a3d81039-ddba-46b0-96f8-88168e182a72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Viewers">
+      <UniqueIdentifier>{335857e3-dd51-4a41-92db-a12774b0cdda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Viewers">
+      <UniqueIdentifier>{9e3b4470-83e8-4ffd-93bd-cbd5d9fce70c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -62,6 +74,18 @@
     </ClCompile>
     <ClCompile Include="Node.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NetController.cpp">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeController.cpp">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="NetViewer.cpp">
+      <Filter>Source Files\Viewers</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeViewer.cpp">
+      <Filter>Source Files\Viewers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +142,18 @@
     </ClInclude>
     <ClInclude Include="Node.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NetController.h">
+      <Filter>Header Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeController.h">
+      <Filter>Header Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="NetViewer.h">
+      <Filter>Header Files\Viewers</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeViewer.h">
+      <Filter>Header Files\Viewers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

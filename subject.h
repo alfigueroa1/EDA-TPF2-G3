@@ -18,7 +18,7 @@ public:
 protected:
 	void notifyAllObservers(void) {
 		for (Observer* o : observers)
-			o->update(this);
+			o->update(this); //si ocurre algun error aqui, avisarle a Alex, por las dudas
 	}
 	vector<Observer*> observers;
 };
