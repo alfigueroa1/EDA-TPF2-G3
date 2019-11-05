@@ -6,10 +6,10 @@
 #define WIN_W 600
 #define WIN_H 300
 
-NetController::NetController(EDANet& m) :
+NetController::NetController(EDANet & m) :
 	model(&m), running(true),
 	display(nullptr), queue(nullptr),
-	backColor(0.f,0.75f,0.75f,1.f),
+	backColor(0.f, 0.75f, 0.75f, 1.f),
 
 	IDbuf(),
 	IParr(),
@@ -17,7 +17,8 @@ NetController::NetController(EDANet& m) :
 
 	viewer(),
 	controllerlist(),
-	viewerlist()
+	viewerlist(),
+	whandler("Main Warnings")
 {
 	model->attach(viewer);
 	init_interface();
@@ -62,7 +63,7 @@ bool NetController::isRunning()
 void NetController::cycle()
 {
 	start_frame();
-	
+
 	controlWindow();
 
 	for (int i = 0; i < controllerlist.size(); i++)
@@ -70,6 +71,8 @@ void NetController::cycle()
 
 	for (int i = 0; i < viewerlist.size(); i++)
 		viewerlist[i]->cycle();
+
+	whandler.draw();
 
 	end_frame();
 }
@@ -135,7 +138,7 @@ void NetController::end_frame()
 
 void NetController::controlWindow()
 {
-	ImGui::Begin("EDANet",&running,ImVec2(WIN_W,WIN_H));
+	ImGui::Begin("EDANet", &running, ImVec2(WIN_W, WIN_H));
 
 	ImGui::Text("Bienvenidos a la fase 2 del TP Integrador de EDA.");
 	ImGui::Text("El controller se encarga de la interfaz presente en Add Nodes (input del usuario):");
@@ -151,22 +154,22 @@ void NetController::controlWindow()
 		ImGui::PushItemWidth(25);
 		ImGui::DragInt(".##1", IParr, 0.5);
 		ImGui::SameLine();
-		ImGui::DragInt(".##2", IParr+1, 0.5);
+		ImGui::DragInt(".##2", IParr + 1, 0.5);
 		ImGui::SameLine();
-		ImGui::DragInt(".##3", IParr+2, 0.5);
+		ImGui::DragInt(".##3", IParr + 2, 0.5);
 		ImGui::SameLine();
-		ImGui::DragInt("Node IP##4", IParr+3, 0.5);
+		ImGui::DragInt("Node IP##4", IParr + 3, 0.5);
 		ImGui::PopItemWidth();
 
 		if (ImGui::Button("Create Node")) {
 			string sID = string(IDbuf);
 			string sPort = to_string(Port);
 			string sIP = to_string(IParr[0]) + '.' + to_string(IParr[1]) + '.' + to_string(IParr[2]) + '.' + to_string(IParr[3]);
-			model->createNode(sIP, sPort, sID);
+			whandler.check(model->createNode(sIP, sPort, sID));
 		}
 	}
 
-	
+
 	ImGui::Text("El viewer se encarga de mostrar la informacion de la EDANet (cantidad de nodos actuales)");
 	viewer.draw();
 	ImGui::End();

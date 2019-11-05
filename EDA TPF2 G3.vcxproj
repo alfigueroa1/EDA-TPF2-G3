@@ -143,10 +143,13 @@
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="NodeController.cpp" />
     <ClCompile Include="NodeViewer.cpp" />
+    <ClCompile Include="WarningWindow.cpp" />
+    <ClCompile Include="WarningWindowHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="blockChain.h" />
     <ClInclude Include="blockChainFinder.h" />
+    <ClInclude Include="errorType.h" />
     <ClInclude Include="fileController.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imconfig_allegro5.h" />
@@ -167,6 +170,8 @@
     <ClInclude Include="NodeViewer.h" />
     <ClInclude Include="observer.h" />
     <ClInclude Include="subject.h" />
+    <ClInclude Include="WarningWindow.h" />
+    <ClInclude Include="WarningWindowHandler.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
