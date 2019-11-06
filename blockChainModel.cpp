@@ -48,7 +48,7 @@ void BlockChainModel::openBlockChain(string path)
 void BlockChainModel::openBlock(unsigned long int b) {
 	bool found = false;
 	for (auto i = blockChain.begin(); i != blockChain.end(); i++) {
-		if (i->getHeight == b) {
+		if (i->getHeight() == b) {
 			curr = i;
 			found = true;
 		}
