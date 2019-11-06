@@ -128,6 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Block.cpp" />
     <ClCompile Include="blockChainFinder.cpp" />
     <ClCompile Include="fileController.cpp" />
     <ClCompile Include="imgui.cpp" />
@@ -147,6 +148,7 @@
     <ClCompile Include="WarningWindowHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="block.h" />
     <ClInclude Include="blockChain.h" />
     <ClInclude Include="blockChainFinder.h" />
     <ClInclude Include="errorType.h" />

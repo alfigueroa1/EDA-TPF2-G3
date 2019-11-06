@@ -37,8 +37,9 @@ public:
 	void debugTx(const Transaction& _tx) { txs.emplace_back(_tx); notifyAllObservers(); }
 	
 private:
+	
 	void addBlock(Block block);
-
+	
 	string myID;
 	string IP;
 	unsigned int port;
