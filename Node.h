@@ -1,24 +1,19 @@
 #pragma once
-
+/*******************************************************************************
+ * INCLUDE HEADER FILES
+ ******************************************************************************/
 #include "subject.h"
 #include "blockChain.h"
 #include "errorType.h"
-
+#include "sSocket.h"
+#include "Client.h"
+#include "Server.h"
 #include <iostream>
+
+
 using namespace std;
 
 typedef string ID;
-
-//ALEX WAS HERE:
-struct sSocket {
-	sSocket() : ip(), port() {}
-	sSocket(const string& _ip, const string& _port) : ip(_ip), port(_port) {}
-	sSocket& operator=(const sSocket& s) { ip = s.ip; port = s.port; return *this; }
-	//sSocket(size_t s, char c, size_t s2, char c2) : ip(s,c),port(s2,c2){}	//punteros
-	string ip;
-	string port;
-};
-
 
 class Node : public Subject {
 public:
@@ -58,9 +53,11 @@ private:
 	vector<sSocket>* neighbourhood; //punteros
 	vector<string> filters;
 	vector<Transaction> txs;
-	//Server
+	vector <Server> servers;
 	vector <Client> clients;
 	unsigned int port;
+
+	void addBlock(Block block);
 
 	string createJsonBlock(unsigned int height);
 	string createJsonTx(Transaction tx);
@@ -72,8 +69,6 @@ private:
 	string createServerBlock(string path);
 	string createServerOkRsp(string path);
 	void createDates(char*, char*);
-
-	void addBlock(Block block);
 
 	// solo para evitar su uso
 public:
