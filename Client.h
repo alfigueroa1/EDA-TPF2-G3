@@ -13,8 +13,8 @@ public:
 	~Client();
 
 	void sendRequest(void);
-	void POST(string path, string json);
-	void GET(string path, string json);
+	void POST(string path, string& json);
+	void GET(string path, string& json);
 	string getResponse(void);
 	int getRunning();
 	

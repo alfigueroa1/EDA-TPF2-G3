@@ -2,6 +2,7 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 #include "Node.h"
+#include "json.hpp"
 #include <iostream>
 
 /*******************************************************************************
@@ -28,8 +29,6 @@ Node::Node(string _ID, string _port, string _IP) { //constructor modificado para
 	*myID = _ID;
 	*IP = _IP;
 
-	neighbourhood = new vector<sSocket>; // no se q demonios hacer
-
 	cout << "Created (the good way)" << endl;
 }
 
@@ -40,13 +39,12 @@ Node::~Node() { // igual el destructor
 
 	delete myID;
 	delete IP;
-	
-	delete neighbourhood;
+
 }
 
 //EDANET
 errorType Node::AddNeighbour(const string& _IP, const string& _port) {	//ALEX!!!	//punteros
-	neighbourhood->emplace_back(_IP, _port);
+	neighbourhood.emplace_back(_IP, _port);
 	notifyAllObservers();
 
 	errorType error;
@@ -87,47 +85,51 @@ errorType Node::postBlock(unsigned int neighbourPos, unsigned int height)
 
 errorType Node::getBlockHeader(unsigned int height, unsigned int neighbourPos)
 {
+	errorType err = { false,"" };
 	Client client(neighbourhood[neighbourPos]);
 	string header = createHeader(height);
 
 	client.GET("/eda_coin/get_block_header/", header);
 	client.sendRequest();
 
-	return false;
+	return err;
 }
 
 errorType Node::postTransaction(unsigned int neighbourPos, Transaction tx)
 {
+	errorType err = { false,"" };
 	Client client(neighbourhood[neighbourPos]);
 	string tx_ = createJsonTx(tx);
 
 	client.POST("/eda_coin/send_tx", tx_);
 	client.sendRequest();
 
-	return false;
+	return err;
 }
 
 errorType Node::postMerkleBlock(unsigned int neighbourPos)
 {
+	errorType err = { false,"" };
 	Client client(neighbourhood[neighbourPos]);
 
 	//client.POST("/eda_coin/send_merkle_block", );
 
 	client.sendRequest();
 
-	return false;
+	return err;
 }
 
 
 errorType Node::postFilter(unsigned int neighbourPos)
 {
+	errorType err = { false,"" };
 	Client client(neighbourhood[neighbourPos]);
 	string id = createJsonFilter(*myID);
 	client.POST("/eda_coin/send_filter", id);
 
 	client.sendRequest();
 
-	return false;
+	return err;
 }
 
 //JSONS
@@ -158,7 +160,6 @@ string Node::createJsonBlock(unsigned int height)
 	blck["nTx"] = block.getNTx();
 
 	return blck.dump();
-
 }
 
 
@@ -237,7 +238,7 @@ string Node::createJsonFilter(string id)
 }
 
 //SERVER
-string Node::ServerResponse(STATE rta)
+string Node::serverResponse(STATE rta)
 {
 	string message;
 
@@ -353,7 +354,6 @@ string Node::createServerOkRsp(string path)
 void Node::createDates(char* c1, char* c2)
 {
 	//Fecha actual
-	//char dateLine[100];
 	time_t currentTime = time(nullptr);
 	struct tm t;
 	struct tm* currTime = &t;
@@ -361,7 +361,6 @@ void Node::createDates(char* c1, char* c2)
 	strftime(c1, 100, "Date: %a, %d %b %G %X GMT", currTime);
 
 	//Fecha de expiracion
-	//char expiresLine[100];
 	struct tm t2 = t;
 	struct tm* nextTime = &t2;
 	if (nextTime->tm_sec >= 30) {
@@ -372,15 +371,13 @@ void Node::createDates(char* c1, char* c2)
 	}
 	nextTime->tm_sec = ((nextTime->tm_sec) + 30) % 60;
 	strftime(c2, 100, "Expires: %a, %d %b %G %X GMT", nextTime);
-
-	//return { dateLine, expiresLine };
 }
 
 
-string Node::getIP() { return *IP; } //punteros
+string Node::getIP() { return *IP; }
 string Node::getPort() { return to_string(port); }
 ID Node::getID() { return *myID; }
-const vector<sSocket>* Node::getNeighbours() { return neighbourhood; } //ALEX WAS HERE AGAIN //punteros
+const vector<sSocket>* Node::getNeighbours() { return &neighbourhood; }
 const vector<Transaction>* Node::getTransactions() { return &txs; }
 const vector<string>* Node::getFilters() { return &filters; }
 

@@ -124,10 +124,7 @@ STATE Server::parseMessage()
 void Server::sendMessage(const string& message)
 {
 	size_t len;
-	do {
-		len = socket->write_some(boost::asio::buffer(message, strlen(message.c_str())), error);
-
-	} while (error.value() == WSAEWOULDBLOCK);
+	len = socket->write_some(boost::asio::buffer(message, strlen(message.c_str())), error);
 
 	if (error.value() != WSAEWOULDBLOCK)
 	{

@@ -29,7 +29,7 @@ Client::~Client()
 }
 
 
-void Client::POST(string path, string json)
+void Client::POST(string path, string& json)
 {
 	string url = "http://" + host + path;
 
@@ -60,7 +60,7 @@ void Client::POST(string path, string json)
 }
 
 
-void Client::GET(string path, string json)
+void Client::GET(string path, string& json)
 {
 	string url = "http://" + host + path;
 

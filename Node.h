@@ -27,6 +27,8 @@ public:
 	errorType postFilter(unsigned int neighbourPos);
 	errorType AddNeighbour(const string& _ID,const string& _port);
 
+	
+
 	ID getID();
 	string getIP() { return *IP; } 
 	string getPort() { return to_string(port); }
@@ -50,7 +52,7 @@ private:
 	string* IP; 
 	BlockChain chain;
 	BlockChain dummieChain;
-	vector<sSocket>* neighbourhood; //punteros
+	vector<sSocket> neighbourhood; //punteros
 	vector<string> filters;
 	vector<Transaction> txs;
 	vector <Server> servers;
@@ -65,6 +67,7 @@ private:
 	string createJsonFilter(string filter);
 	string createHeader(unsigned int height);
 
+	string serverResponse(STATE rta);
 	string createServerErrRsp();
 	string createServerBlock(string path);
 	string createServerOkRsp(string path);
