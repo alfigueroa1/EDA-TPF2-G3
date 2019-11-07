@@ -34,7 +34,8 @@ void NodeController::update(void*)
 void NodeController::cycle()
 {
 	// DEBUG
-
+	model->keepListening();
+	model->keepSending();
 	ImGui::Begin(windowName.c_str());
 	ImGui::BeginChild("CONTROL", ImVec2(CHILD_W, CHILD_H));
 	switch (cstate) {
