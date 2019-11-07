@@ -30,7 +30,7 @@ Node::Node(string _ID, string _port, string _IP) { //constructor modificado para
 	*myID = _ID;
 	*IP = _IP;
 	//Fill bblockchain
-	saveBlockChain(dummieChain, "dummie.json");
+	saveBlockChain(dummieChain, "dummy.json");
 	//Create Genesis Server
 	Server* genesisServer = new Server(port);
 	genesisServer->startConnection();			//Preguntar si esto funcaria
