@@ -2,16 +2,92 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 #include <vector>
-#include "block.h"
+#include "Block.h"
+#include "json.hpp"
+#include <fstream>
+
+/*******************************************************************************
+ * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
+ ******************************************************************************/
+#define BLOCK_FIELDS 7
+#define TRANS_FIELDS 5
 
  /*******************************************************************************
   * FUNCTION DECLARATIONS WITH FILE LEVEL SCOPE
   ******************************************************************************/
 static unsigned int generateID(const char* str);
+
+
 /*******************************************************************************
  * CLASS METHODS DEFINITIONS
  ******************************************************************************/
 using namespace std;
+using json = nlohmann::json;
+
+
+bool Block::validateBlock(string blck)
+{
+	bool ret = false;
+
+	try
+	{
+		json block = json::parse(blck);
+
+		//Block
+		if (block.size() == BLOCK_FIELDS) //Si son 7 elementos
+		{
+			block.at("height");
+			block.at("nonce");
+			block.at("blockid");	//Se fija que sean los correspondientes
+			block.at("previousblockid");
+			block.at("merkleroot");
+			int ntx = block.at("nTx");
+			block.at("height");
+			block.at("tx");
+
+			//Transactions
+			auto arrayTrans = block["tx"];
+			for (auto& trans : arrayTrans)	//Parsea todas las transacciones
+			{
+				if (arrayTrans.size() == ntx && trans.size() == TRANS_FIELDS)	//Si son 5 elementos
+				{
+					trans.at("txid");
+					int txin = trans.at("nTxin");
+					trans.at("vin");	//Se fija que sean los correctos
+					int txout = trans.at("nTxout");
+					trans.at("vout");
+
+					auto vIn = trans["vin"];
+					auto vOut = trans["vout"];
+					if (vIn.size() == txin && vOut.size() == txout)
+					{
+						for (auto& elsi : vIn)
+						{
+							elsi.at("blockid");
+							elsi.at("txid");
+						}
+
+						for (auto& elso : vOut)
+						{
+							elso.at("publicid");
+							elso.at("amount");
+						}
+
+						ret = true;
+					}
+				}
+			}
+		}
+	}
+
+	catch (std::exception& e)
+	{
+		ret = false;
+	}
+
+	return ret;
+}
+
 
 vector<newIDstr> Block::getMerklePath(Transaction trx) {
 	vector<newIDstr> path;
@@ -65,7 +141,7 @@ void Block::fillMerklePath(vector<newIDstr>* path, vector<newIDstr>* tree, int j
 }
 
 long int Block::getBlockPos(vector<Block>* BlockChain) {
-	if (!BlockChain->empty) {
+	if (!BlockChain->empty()) {
 		auto i = BlockChain->begin();
 		for (int j = 0; i != BlockChain->end(); i++, j++) {
 			if (i->getHeight() == height)

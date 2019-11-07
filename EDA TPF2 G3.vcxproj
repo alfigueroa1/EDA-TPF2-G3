@@ -69,7 +69,11 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Allegro_AddonImage>true</Allegro_AddonImage>
+    <Allegro_AddonPrimitives>true</Allegro_AddonPrimitives>
+    <Allegro_AddonColor>true</Allegro_AddonColor>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -132,16 +136,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Block.cpp" />
-    <ClCompile Include="blockChainFinder.cpp" />
     <ClCompile Include="Client.cpp" />
-    <ClCompile Include="fileController.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
     <ClCompile Include="imgui_draw.cpp" />
     <ClCompile Include="imgui_impl_allegro5.cpp" />
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="blockChainModel.cpp" />
     <ClCompile Include="EDANet.cpp" />
     <ClCompile Include="NetController.cpp" />
     <ClCompile Include="NetViewer.cpp" />
@@ -155,10 +156,8 @@
   <ItemGroup>
     <ClInclude Include="block.h" />
     <ClInclude Include="blockChain.h" />
-    <ClInclude Include="blockChainFinder.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="errorType.h" />
-    <ClInclude Include="fileController.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imconfig_allegro5.h" />
     <ClInclude Include="imgui.h" />

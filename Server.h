@@ -12,7 +12,7 @@
 using namespace std;
 
 
-typedef enum { POST, GET, ERR } STATE;
+typedef enum { TX, BLOCK, MERKLE, FILTER, GET, ERR } STATE;
 
 class Server
 {
@@ -40,4 +40,8 @@ private:
 	boost::asio::io_service* IO_handler;
 	boost::asio::ip::tcp::socket* socket;
 	boost::asio::ip::tcp::acceptor* acceptor;
+
+	bool validateBlock(string blck);
+	bool validateTx(string tx);
+	bool validateFilter(string filter);
 };

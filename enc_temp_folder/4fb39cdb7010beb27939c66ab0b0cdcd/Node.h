@@ -27,6 +27,8 @@ public:
 	errorType postFilter(unsigned int neighbourPos);
 	errorType AddNeighbour(const string& _ID,const string& _port);
 
+	
+
 	ID getID();
 	string getIP();
 	string getPort();

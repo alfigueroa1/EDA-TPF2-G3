@@ -59,19 +59,14 @@ errorType Node::AddNeighbour(const string& _IP, const string& _port) {	//ALEX!!!
 	return error;
 }
 
-void Node::keepListening()
-{
+void keepListening() {
 
 }
+void keepSending() {
 
-void Node::keepSending()
-{
-	
 }
+void Node::addBlock(Block block) {
 
-void Node::addBlock(Block block) 
-{
-	chain.push_back(block);
 }
 
 //POST-GET

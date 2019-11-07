@@ -4,7 +4,7 @@
 #include "WarningWindowHandler.h"
 
 #define COMBO_SIZE	50
-enum controlState { OUT, PBLOCK, GBHEADER, PTX, PMBLOCK, PFILTER, ADDN };
+enum controlState { OUT_, PBLOCK, GBHEADER, PTX, PMBLOCK, PFILTER, ADDN };
 
 class NodeController :
 	public Observer

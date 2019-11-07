@@ -8,7 +8,7 @@ class EDANet : public Subject {
 public:
 	EDANet();
 	~EDANet();
-	errorType createNode(const string& IP, const string& port, const string& ID) {};
+	errorType createNode(const string& IP, const string& port, const string& ID);
 	unsigned int getNodeAmount(void) { return nodes.size(); };
 	Node* getNode(unsigned int nodePos) { Node* rta = nullptr; if (nodePos < nodes.size() && nodePos >= 0) rta = nodes[nodePos]; return rta; }
 

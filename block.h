@@ -38,9 +38,9 @@ typedef vector<newIDstr> MerkleTree;
 class Block {
 public:
 	//TPF2 Methods
+	bool validateBlock(string block);
+
 	vector<string> getMerklePath(Transaction trx);
-
-
 	vector<Transaction> getTransactions() { return tx; };
 	Transaction getTx(vector<Transaction>::iterator it) { for (auto i = tx.begin(); i != tx.end(); i++) { if (i == it) return *i; } };
 	Transaction getTx(unsigned int it) { if (it >= 0 && it < tx.size())	return tx[it]; };

@@ -1,4 +1,4 @@
-#pragma once
+pragma once
 
 #include "observer.h"
 #include "model.h"

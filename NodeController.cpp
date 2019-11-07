@@ -9,7 +9,7 @@
 
 
 NodeController::NodeController(Node & m) :
-	model(&m), mID(), mNeighbours(), cstate(OUT), windowName(), availableNeighbours(false),
+	model(&m), mID(), mNeighbours(), cstate(OUT_), windowName(), availableNeighbours(false),
 	currNeighbour(0), comboNeighbour(), newId(), newPort(), nIp(), nPort(),
 	bheaderHeight(0), whandler(m.getID())
 {
@@ -38,7 +38,7 @@ void NodeController::cycle()
 	ImGui::Begin(windowName.c_str());
 	ImGui::BeginChild("CONTROL", ImVec2(CHILD_W, CHILD_H));
 	switch (cstate) {
-	case OUT:
+	case OUT_:
 		debugTx();
 		drawOut();
 		break;
@@ -101,8 +101,8 @@ void NodeController::drawPBlock() {
 	if (availableNeighbours) {
 
 		if (ImGui::Button("POST BLOCK")) {
-			whandler.check(model->postBlock(currNeighbour));
-			cstate = OUT;
+			whandler.check(model->postBlock(currNeighbour, 1));
+			cstate = OUT_;
 		}
 	}
 	else {
@@ -120,7 +120,7 @@ void NodeController::drawGBHeader() {
 
 		if (ImGui::Button("GET BLOCK HEADER")) {
 			whandler.check(model->getBlockHeader(bheaderHeight, currNeighbour));
-			cstate = OUT;
+			cstate = OUT_;
 		}
 
 	}
@@ -139,7 +139,7 @@ void NodeController::drawPTX() {
 
 		if (ImGui::Button("POST TRANSACTION")) {
 			whandler.check(model->postTransaction(currNeighbour, dummyTX));
-			cstate = OUT;
+			cstate = OUT_;
 		}
 
 	}
@@ -156,7 +156,7 @@ void NodeController::drawPMBlock() {
 
 		if (ImGui::Button("POST MERKLE BLOCK")) {
 			whandler.check(model->postMerkleBlock(currNeighbour));
-			cstate = OUT;
+			cstate = OUT_;
 		}
 
 	}
@@ -174,7 +174,7 @@ void NodeController::drawPFilter() {
 
 		if (ImGui::Button("POST FILTER")) {
 			whandler.check(model->postFilter(currNeighbour));
-			cstate = OUT;
+			cstate = OUT_;
 		}
 
 	}
@@ -193,14 +193,14 @@ void NodeController::drawAddNode() {
 		nIp = to_string(newId[0]) + '.' + to_string(newId[1]) + '.' + to_string(newId[2]) + '.' + to_string(newId[3]);
 		nPort = to_string(newPort);
 		whandler.check(model->AddNeighbour(nIp, nPort));
-		cstate = OUT;
+		cstate = OUT_;
 	}
 }
 
 void NodeController::returnButton()
 {
 	if (ImGui::Button("Return"))
-		cstate = OUT;
+		cstate = OUT_;
 }
 
 void NodeController::neighbourSelect()
