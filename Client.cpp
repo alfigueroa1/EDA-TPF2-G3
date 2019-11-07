@@ -31,6 +31,7 @@ Client::~Client()
 
 void Client::POST(string path, string& json)
 {
+	cType = POSTClient;
 	string url = "http://" + host + path;
 
 	if (curl && curlm)
@@ -62,6 +63,7 @@ void Client::POST(string path, string& json)
 
 void Client::GET(string path, string& json)
 {
+	cType = GETClient;
 	string url = "http://" + host + path;
 
 	if (curl && curlm)

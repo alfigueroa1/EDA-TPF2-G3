@@ -31,22 +31,22 @@ bool Block::validateBlock(string blck)
 
 	try
 	{
-		json block = json::parse(blck);
+		json block_ = json::parse(blck);
 
 		//Block
-		if (block.size() == BLOCK_FIELDS) //Si son 7 elementos
+		if (block_.size() == BLOCK_FIELDS) //Si son 7 elementos
 		{
-			block.at("height");
-			block.at("nonce");
-			block.at("blockid");	//Se fija que sean los correspondientes
-			block.at("previousblockid");
-			block.at("merkleroot");
-			int ntx = block.at("nTx");
-			block.at("height");
-			block.at("tx");
+			block_.at("height");
+			block_.at("nonce");
+			block_.at("blockid");	//Se fija que sean los correspondientes
+			block_.at("previousblockid");
+			block_.at("merkleroot");
+			int ntx = block_.at("nTx");
+			block_.at("height");
+			block_.at("tx");
 
 			//Transactions
-			auto arrayTrans = block["tx"];
+			auto arrayTrans = block_["tx"];
 			for (auto& trans : arrayTrans)	//Parsea todas las transacciones
 			{
 				if (arrayTrans.size() == ntx && trans.size() == TRANS_FIELDS)	//Si son 5 elementos
@@ -86,6 +86,76 @@ bool Block::validateBlock(string blck)
 	}
 
 	return ret;
+}
+
+
+void Block::saveBlock(string blck)
+{
+	json blocks = json::parse(blck);
+
+	auto height = blocks["height"];
+	this->height = height;
+
+	auto nonce = blocks["nonce"];
+	this->nonce = nonce;
+
+	auto blockId = blocks["blockid"];
+	this->blockId = blockId.get<string>();
+
+	auto prevBlockId = blocks["previousblockid"];
+	this->previousBlockId = prevBlockId.get<string>();
+
+	auto root = blocks["merkleroot"];
+	this->merkleRoot = root.get<string>();
+
+	auto nTx = blocks["nTx"];
+	this->nTx = nTx;
+
+	//Transactions
+	auto arrayTrans = blocks["tx"];
+	for (auto& trans : arrayTrans)
+	{
+		Transaction auxTrans;
+
+		auto txId = trans["txid"];
+		auxTrans.txId = txId.get<string>();
+
+		auto nTxIn = trans["nTxin"];
+		auxTrans.nTxIn = nTxIn;
+
+		auto vIn = trans["vin"];
+		for (auto& elsi : vIn)
+		{
+			Vin auxVin;
+
+			auto tBlockId = elsi["blockid"];
+			auxVin.blockId = tBlockId.get<string>();
+
+			auto tTxId = elsi["txid"];
+			auxVin.txId = tTxId.get<string>();
+
+			auxTrans.vIn.push_back(auxVin);
+		}
+
+		auto nTxOut = trans["nTxout"];
+		auxTrans.nTxOut = nTxOut;
+
+		auto vOut = trans["vout"];
+		for (auto& elso : vOut)
+		{
+			Vout auxVout;
+
+			auto publicId = elso["publicid"];
+			auxVout.publicId = publicId.get<string>();
+
+			auto amount = elso["amount"];
+			auxVout.amount = amount;
+
+			auxTrans.vOut.push_back(auxVout);
+		}
+
+		this->tx.push_back(auxTrans);
+	}
 }
 
 

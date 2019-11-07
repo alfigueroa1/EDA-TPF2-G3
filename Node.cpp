@@ -4,6 +4,7 @@
 #include "Node.h"
 #include "json.hpp"
 #include <iostream>
+#include <fstream>
 
 /*******************************************************************************
  * NAMESPACES
@@ -28,7 +29,12 @@ Node::Node(string _ID, string _port, string _IP) { //constructor modificado para
 	IP = new string(40,' ');
 	*myID = _ID;
 	*IP = _IP;
-
+	//Fill bblockchain
+	saveBlockChain(dummieChain, "dummie.json");
+	//Create Genesis Server
+	Server* genesisServer = new Server(port);
+	genesisServer->startConnection();			//Preguntar si esto funcaria
+	servers.push_back(genesisServer);
 	cout << "Created (the good way)" << endl;
 }
 
@@ -40,6 +46,16 @@ Node::~Node() { // igual el destructor
 	delete myID;
 	delete IP;
 
+	if (!servers.empty()) {
+		for (int i = 0; i < servers.size(); i++)
+			delete servers[i];
+		servers.clear();
+	}
+	if (!clients.empty()) {
+		for (int i = 0; i < clients.size(); i++)
+			delete clients[i];
+		clients.clear();
+	}
 }
 
 //EDANET
@@ -59,14 +75,261 @@ errorType Node::AddNeighbour(const string& _IP, const string& _port) {	//ALEX!!!
 	return error;
 }
 
+void Node::saveBlockChain(BlockChain& blockchain, string path)
+{
+	std::ifstream i(path.c_str()); //Se puede cambiar, no se como recibo el JSON;
+	json j;
+	i >> j;
+
+	for (auto& blocks : j)
+	{
+		//Block 
+		Block block;
+
+		auto height = blocks["height"];
+		block.setHeight(height);
+
+		auto nonce = blocks["nonce"];
+		block.setNonce(nonce);
+
+		auto blockId = blocks["blockid"];
+		block.setBlockId(blockId.get<string>());
+
+		auto prevBlockId = blocks["previousblockid"];
+		block.setPrevBlockId(prevBlockId.get<string>());
+
+		auto root = blocks["merkleroot"];
+		block.setMerkleRoot(root.get<string>());
+
+		auto nTx = blocks["nTx"];
+		block.setNTx(nTx);
+
+		//Transactions
+		auto arrayTrans = blocks["tx"];
+		for (auto& trans : arrayTrans)
+		{
+			Transaction auxTrans;
+
+			auto txId = trans["txid"];
+			auxTrans.txId = txId.get<string>();
+
+			auto nTxIn = trans["nTxin"];
+			auxTrans.nTxIn = nTxIn;
+
+			auto vIn = trans["vin"];
+			for (auto& elsi : vIn)
+			{
+				Vin auxVin;
+
+				auto tBlockId = elsi["blockid"];
+				auxVin.blockId = tBlockId.get<string>();
+
+				auto tTxId = elsi["txid"];
+				auxVin.txId = tTxId.get<string>();
+
+				auxTrans.vIn.push_back(auxVin);
+			}
+
+			auto nTxOut = trans["nTxout"];
+			auxTrans.nTxOut = nTxOut;
+
+			auto vOut = trans["vout"];
+			for (auto& elso : vOut)
+			{
+				Vout auxVout;
+
+				auto publicId = elso["publicid"];
+				auxVout.publicId = publicId.get<string>();
+
+				auto amount = elso["amount"];
+				auxVout.amount = amount;
+
+				auxTrans.vOut.push_back(auxVout);
+			}
+
+			block.addTx(auxTrans);
+		}
+
+		blockchain.push_back(block);
+	}
+}
+
 void Node::keepListening()
 {
+	vector<vector<Server*>::iterator> deleteThis;
+	vector<Server*> doneServers;
+	if ((*(servers.end() - 1))->getDoneListening()) {
+		Server* newServer = new Server(port);
+		newServer->startConnection();
+		servers.push_back(newServer);
+	}
+	auto i = servers.begin();
+	for (; i != servers.end()-1; i++) {
+		if (!(*i)->getDoneDownloading())
+			(*i)->receiveMessage();
+		else if (!(*i)->getDoneSending())
+			(*i)->sendMessage(serverResponse((*i)->getState()));
+		if ((*i)->getDoneSending()) {
+			doneServers.push_back(*i);
+			deleteThis.push_back(i);
+		}
+	}
+	//Handle finished servers
+	auto j = doneServers.begin();
+	for (; j != doneServers.end(); j++) {
+		Block blck;
+		switch ((*j)->getState()){
+		case BLOCK:			//Done
+			blck.saveBlock((*j)->getMessage());
+			chain.push_back(blck);
+			break;
+		case TX:			//Done
+			saveTx((*j)->getMessage());
+			break;
+		case MERKLE:		//Done
+			//Merkle mkl;
+			saveMerkleBlock((*j)->getMessage());
+			break;
+		case FILTER:		//Done
+			filters.push_back((*j)->getMessage());
+			break;
+		}
+	}
+	i = servers.begin();
+	for (; i != servers.end() - 1; i++) {
+		if ((*i)->getDoneSending())
+			delete* i;
+	}
+	auto k = deleteThis.begin();
+	for (; k != deleteThis.end(); j++) {
+		servers.erase(*k);
+	}
+}
 
+void Node::saveMerkleBlock(string _merkleBlock) {
+	MerkleBlock mBlock;
+	json merkleBlock = json::parse(_merkleBlock);
+
+	auto blockId = merkleBlock["blockid"];
+	mBlock.blockId = blockId.get<string>();
+
+	//Transactions
+	auto arrayTrans = merkleBlock["tx"];
+	for (auto& trans : arrayTrans)
+	{
+		Transaction auxTrans;
+
+		auto txId = trans["txid"];
+		auxTrans.txId = txId.get<string>();
+
+		auto nTxIn = trans["nTxin"];
+		auxTrans.nTxIn = nTxIn;
+
+		auto vIn = trans["vin"];
+		for (auto& elsi : vIn)
+		{
+			Vin auxVin;
+
+			auto tBlockId = elsi["blockid"];
+			auxVin.blockId = tBlockId.get<string>();
+
+			auto tTxId = elsi["txid"];
+			auxVin.txId = tTxId.get<string>();
+
+			auxTrans.vIn.push_back(auxVin);
+		}
+
+		auto nTxOut = trans["nTxout"];
+		auxTrans.nTxOut = nTxOut;
+
+		auto vOut = trans["vout"];
+		for (auto& elso : vOut)
+		{
+			Vout auxVout;
+
+			auto publicId = elso["publicid"];
+			auxVout.publicId = publicId.get<string>();
+
+			auto amount = elso["amount"];
+			auxVout.amount = amount;
+
+			auxTrans.vOut.push_back(auxVout);
+		}
+
+		mBlock.tx.push_back(auxTrans);
+	}
+
+	auto txPos = merkleBlock["txPos"];
+	mBlock.txPos = txPos;
+	
+	/*auto mPath = merkleBlock["merklePath"];
+	mBlock.merklePath = mPath.get<string>();*/
+
+	merkleBlocks.push_back(mBlock);
+}
+
+void Node::saveTx(string _trans) {
+	json trans;
+	Transaction tx;
+	trans = json::parse(_trans);
+	auto txId = trans["txid"];
+	tx.txId = txId.get<string>();
+	auto nTxIn = trans["nTxin"];
+	tx.nTxIn = nTxIn;
+	auto vIn = trans["vin"];
+	for (auto& elsi : vIn) {
+		Vin auxVin;
+		auto tBlockId = elsi["blockid"];
+		auxVin.blockId = tBlockId.get<string>();
+		auto tTxId = elsi["txid"];
+		auxVin.txId = tTxId.get<string>();
+		tx.vIn.push_back(auxVin);
+	}
+	auto nTxOut = trans["nTxout"];
+	tx.nTxOut = nTxOut;
+	auto vOut = trans["vout"];
+	for (auto& elso : vOut) {
+		Vout auxVout;
+		auto publicId = elso["publicid"];
+		auxVout.publicId = publicId.get<string>();
+		auto amount = elso["amount"];
+		auxVout.amount = amount;
+		tx.vOut.push_back(auxVout);
+	}
+	txs.push_back(tx);
 }
 
 void Node::keepSending()
-{
-	
+{	
+	vector<vector<Client*>::iterator> deleteThis;
+	vector<Client*> doneClients;
+
+	auto i = clients.begin();
+	for (; i != clients.end(); i++) {
+		if ((*i)->getRunning() == 0) {
+			doneClients.push_back(*i);
+			deleteThis.push_back(i);
+		}
+		else
+			(*i)->sendRequest();
+	}
+	//Handle finished servers
+	auto j = doneClients.begin();
+	for (; j != doneClients.end(); j++) {
+		//Parse their msgs
+		if ((*j)->getClientType() == POSTClient) {
+
+		}
+		else if ((*j)->getClientType() == GETClient) {
+			saveMerkleBlock((*j)->getResponse());
+		}
+		//And delete them
+		delete* j;
+	}
+	auto k = deleteThis.begin();
+	for (; k != deleteThis.end(); j++) {
+		clients.erase(*k);
+	}
 }
 
 void Node::addBlock(Block block) 
@@ -78,12 +341,12 @@ void Node::addBlock(Block block)
 errorType Node::postBlock(unsigned int neighbourPos, unsigned int height)
 {
 	errorType err = { false,"" };
-	Client client(neighbourhood[neighbourPos]);
+	Client* client = new Client(neighbourhood[neighbourPos]);
 	string blck = createJsonBlock(height);
 
-	client.POST("/eda_coin/send_block", blck);
-	client.sendRequest();
-
+	client->POST("/eda_coin/send_block", blck);
+	//client.sendRequest();
+	clients.push_back(client);
 	notifyAllObservers();
 	return err;
 }
@@ -91,12 +354,12 @@ errorType Node::postBlock(unsigned int neighbourPos, unsigned int height)
 errorType Node::getBlockHeader(unsigned int height, unsigned int neighbourPos)
 {
 	errorType err = { false,"" };
-	Client client(neighbourhood[neighbourPos]);
+	Client* client = new Client(neighbourhood[neighbourPos]);
 	string header = createHeader(height);
 
-	client.GET("/eda_coin/get_block_header/", header);
-	client.sendRequest();
-
+	client->GET("/eda_coin/get_block_header/", header);
+	//client.sendRequest();
+	clients.push_back(client);
 	notifyAllObservers();
 	return err;
 }
@@ -104,12 +367,12 @@ errorType Node::getBlockHeader(unsigned int height, unsigned int neighbourPos)
 errorType Node::postTransaction(unsigned int neighbourPos, Transaction tx)
 {
 	errorType err = { false,"" };
-	Client client(neighbourhood[neighbourPos]);
+	Client* client = new Client(neighbourhood[neighbourPos]);
 	string tx_ = createJsonTx(tx);
 
-	client.POST("/eda_coin/send_tx", tx_);
-	client.sendRequest();
-
+	client->POST("/eda_coin/send_tx", tx_);
+	//client.sendRequest();
+	clients.push_back(client);
 	notifyAllObservers();
 	return err;
 }
@@ -117,12 +380,13 @@ errorType Node::postTransaction(unsigned int neighbourPos, Transaction tx)
 errorType Node::postMerkleBlock(unsigned int neighbourPos)
 {
 	errorType err = { false,"" };
-	Client client(neighbourhood[neighbourPos]);
+	Client* client = new Client(neighbourhood[neighbourPos]);
+	//ADD CREATED CLIENTS TO CLIENT LIST
 	string merkle = createJsonMerkle();
-	client.POST("/eda_coin/send_merkle_block", merkle);
+	client->POST("/eda_coin/send_merkle_block", merkle);
 
-	client.sendRequest();
-
+	//client.sendRequest();
+	clients.push_back(client);
 	notifyAllObservers();
 	return err;
 }
@@ -131,12 +395,12 @@ errorType Node::postMerkleBlock(unsigned int neighbourPos)
 errorType Node::postFilter(unsigned int neighbourPos)
 {
 	errorType err = { false,"" };
-	Client client(neighbourhood[neighbourPos]);
+	Client* client = new Client(neighbourhood[neighbourPos]);
 	string id = createJsonFilter(*myID);
-	client.POST("/eda_coin/send_filter", id);
+	client->POST("/eda_coin/send_filter", id);
 
-	client.sendRequest();
-
+	//client.sendRequest();
+	clients.push_back(client);
 	notifyAllObservers();
 	return err;
 }
@@ -403,9 +667,3 @@ ID Node::getID() { return *myID; }
 const vector<sSocket>* Node::getNeighbours() { return &neighbourhood; }
 const vector<Transaction>* Node::getTransactions() { return &txs; }
 const vector<string>* Node::getFilters() { return &filters; }
-
-/*Node::Node(Node& n)
-{
-	cout << "Copied" << endl;
-	//todo
-}*/

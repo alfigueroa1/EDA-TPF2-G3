@@ -2,9 +2,11 @@
 #include "sSocket.h"
 #include <iostream>
 #include <string>
-#include <curl.h>
+#include <curl/curl.h>
 
 using namespace std;
+
+typedef enum {POSTClient, GETClient} ClientType;
 
 class Client 
 {
@@ -17,10 +19,10 @@ public:
 	void GET(string path, string& json);
 	string getResponse(void);
 	int getRunning();
-	
+	ClientType getClientType() { return cType; };
 
 private:
-
+	ClientType cType;
 	CURLM* curlm;
 	CURL* curl;
 	string host;

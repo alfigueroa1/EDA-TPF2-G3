@@ -17,6 +17,8 @@ Server::Server(unsigned int port)
 	doneListening = false;
 	doneSending = false;
 	receiveMsg.clear();
+	bodyMsg.clear();
+
 
 	IO_handler = new boost::asio::io_service();
 	boost::asio::ip::tcp::endpoint ep(boost::asio::ip::tcp::v4(), port);
@@ -57,15 +59,18 @@ void Server::receiveMessage()
 	char buf[1000] = {};
 	size_t len = 0;
 	len = socket->read_some(boost::asio::buffer(buf), error);
+	receiveMsg += buf;
 	if (error.value() != WSAEWOULDBLOCK)
 	{
 		doneDownloading = true;
+		state = parseMessage();
 		cout << buf << endl;
 	}
-	receiveMsg += buf;
 }
 
-
+STATE Server::getState() {
+	return state;
+}
 
 STATE Server::parseMessage()
 {
@@ -73,9 +78,6 @@ STATE Server::parseMessage()
 
 	if (receiveMsg.find("GET") != string::npos)
 	{
-		size_t pos = receiveMsg.find_last_of(CRLF, receiveMsg.length() - strlen(CRLF));
-		string json = receiveMsg.substr(pos + 1);
-
 		if (receiveMsg.find("/eda_coin/get_block_header/"))
 		{
 			rta = GET;
@@ -90,11 +92,11 @@ STATE Server::parseMessage()
 	else if (receiveMsg.find("POST") != string::npos)
 	{
 		size_t pos = receiveMsg.find_last_of(CRLF, receiveMsg.length() - strlen(CRLF));
-		string json = receiveMsg.substr(pos + 1);
+		bodyMsg = receiveMsg.substr(pos + 1);
 
 		if (receiveMsg.find("/eda_coin/send_block") != string::npos)
 		{
-			if (validateBlock(json))
+			if (validateBlock(bodyMsg))
 			{
 				rta = BLOCK;
 			}
@@ -102,7 +104,7 @@ STATE Server::parseMessage()
 
 		else if (receiveMsg.find("/eda_coin/send_tx") != string::npos)
 		{
-			if (validateTx(json))
+			if (validateTx(bodyMsg))
 			{
 				rta = TX;
 			}
@@ -116,7 +118,7 @@ STATE Server::parseMessage()
 
 		else if (receiveMsg.find("/eda_coin/send_filter") != string::npos)
 		{
-			if (validateFilter(json))
+			if (validateFilter(bodyMsg))
 			{
 				rta = FILTER;
 			}
@@ -155,6 +157,7 @@ void Server::sendMessage(const string& message)
 bool Server::getDoneListening() { return doneListening; }
 bool Server::getDoneSending() { return doneSending; }
 bool Server::getDoneDownloading() { return doneDownloading; }
+string Server::getMessage() { return bodyMsg; }
 
 
 bool Server::validateBlock(string blck)

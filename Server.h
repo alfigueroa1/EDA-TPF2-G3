@@ -21,11 +21,12 @@ public:
 	void startConnection();
 	void listening();
 	void receiveMessage();
-	STATE parseMessage();
 	void sendMessage(const string& message);
 	bool getDoneListening();
 	bool getDoneDownloading();
 	bool getDoneSending();
+	STATE getState();
+	string getMessage();
 	~Server();
 
 
@@ -35,12 +36,15 @@ private:
 	bool doneListening;
 	bool doneDownloading;
 	bool doneSending;
+	STATE state;
 	string receiveMsg;
+	string bodyMsg;
 	boost::system::error_code error;
 	boost::asio::io_service* IO_handler;
 	boost::asio::ip::tcp::socket* socket;
 	boost::asio::ip::tcp::acceptor* acceptor;
 
+	STATE parseMessage();
 	bool validateBlock(string blck);
 	bool validateTx(string tx);
 	bool validateFilter(string filter);

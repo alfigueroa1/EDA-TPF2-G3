@@ -50,20 +50,26 @@ private:
 	string* IP; 
 	BlockChain chain;
 	BlockChain dummieChain;
+	void saveBlockChain(BlockChain& blockchain, string path);
 	vector<sSocket> neighbourhood; //punteros
 	vector<string> filters;
 	vector<Transaction> txs;
-	vector <Server> servers;
-	vector <Client> clients;
+	vector<MerkleBlock> merkleBlocks;
+	//MerkleBlock
+	vector <Server*> servers;
+	vector <Client*> clients;
 	unsigned int port;
 
 	void addBlock(Block block);
+	void saveTx(string trans);
+	void saveMerkleBlock(string merkleBlock);
 
 	string createJsonBlock(unsigned int height);
 	string createJsonTx(Transaction tx);
 	string createJsonMerkle();
 	string createJsonFilter(string filter);
 	string createHeader(unsigned int height);
+
 
 	string serverResponse(STATE rta);
 	string createServerErrRsp();
