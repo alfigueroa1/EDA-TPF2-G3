@@ -201,7 +201,7 @@ void Node::keepListening()
 			delete* i;
 	}
 	auto k = deleteThis.begin();
-	for (; k != deleteThis.end(); j++) {
+	for (; k != deleteThis.end(); k++) {
 		servers.erase(*k);
 	}
 }
