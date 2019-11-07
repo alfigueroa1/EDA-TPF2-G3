@@ -1,53 +1,77 @@
 #pragma once
-
+/*******************************************************************************
+ * INCLUDE HEADER FILES
+ ******************************************************************************/
 #include "subject.h"
 #include "blockChain.h"
 #include "errorType.h"
+#include "sSocket.h"
+#include "Client.h"
+#include "Server.h"
+#include <iostream>
+
+
+using namespace std;
 
 typedef string ID;
 
-struct sSocket {
-	//sSocket() : ip(), port() {}
-	//sSocket(const string& _ip, const string& _port) : ip(_ip), port(_port) {}
-	//sSocket& operator=(const sSocket& s) { ip = s.ip; port = s.port; return *this; }
-	string ip;
-	string port;
-};
-
 class Node : public Subject {
 public:
-	Node(string _ID, string _port, string _IP);
+	Node(string _ID, string _port, string _IP);	
 	~Node();
-	errorType postBlock(unsigned int neighbourPos);
+
+	errorType postBlock(unsigned int neighbourPos, unsigned int height);
 	errorType getBlockHeader(unsigned int height, unsigned int neighbourPos);
 	errorType postTransaction(unsigned int neighbourPos, Transaction tx);
-	errorType postMerkleBlock(unsigned int neighbourPos);		//Posts about last block in blockchain
+	errorType postMerkleBlock(unsigned int neighbourPos);
 	errorType postFilter(unsigned int neighbourPos);
 	errorType AddNeighbour(const string& _ID,const string& _port);
 
 	ID getID();
-	string getIP() { return IP; }
+	string getIP() { return *IP; } 
 	string getPort() { return to_string(port); }
-	const vector<sSocket>* getNeighbours() { return &neighbourhood; }
-	const vector<Transaction>* getTransactions() { return &txs; };
-	const vector<string>* getFilters() { return &filters; };
+	const vector<sSocket>* getNeighbours();
+	const vector<Transaction>* getTransactions();
+	const vector<string>* getFilters();
 	void keepListening();
 	void keepSending();
 
-	void debugTx(const Transaction& _tx) { txs.emplace_back(_tx); notifyAllObservers(); }
+
+	//DEBUG
+	void debugTx(const Transaction& TX) {
+		txs.emplace_back(TX);
+		notifyAllObservers();
+
+	}
+
 	
 private:
-	
-	void addBlock(Block block);
-	
-	string myID;
-	string IP;
-	unsigned int port;
+	string* myID;			
+	string* IP; 
 	BlockChain chain;
-	//Server
-	//Client vector
-	vector<BlockChain> dummieChain;
-	vector<sSocket> neighbourhood;
+	BlockChain dummieChain;
+	vector<sSocket>* neighbourhood; //punteros
 	vector<string> filters;
 	vector<Transaction> txs;
+	vector <Server> servers;
+	vector <Client> clients;
+	unsigned int port;
+
+	void addBlock(Block block);
+
+	string createJsonBlock(unsigned int height);
+	string createJsonTx(Transaction tx);
+	string createJsonMerkle();
+	string createJsonFilter(string filter);
+	string createHeader(unsigned int height);
+
+	string createServerErrRsp();
+	string createServerBlock(string path);
+	string createServerOkRsp(string path);
+	void createDates(char*, char*);
+
+	// solo para evitar su uso
+public:
+	Node& operator=(Node& n) = delete;
+	//Node(Node& n);
 };
