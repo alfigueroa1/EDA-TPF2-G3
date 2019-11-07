@@ -201,7 +201,7 @@ void Node::keepListening()
 			delete* i;
 	}
 	auto k = deleteThis.begin();
-	for (; k != deleteThis.end(); j++) {
+	for (; k != deleteThis.end(); k++) {
 		servers.erase(*k);
 	}
 }
@@ -327,7 +327,7 @@ void Node::keepSending()
 		delete* j;
 	}
 	auto k = deleteThis.begin();
-	for (; k != deleteThis.end(); j++) {
+	for (; k != deleteThis.end(); k++) {
 		clients.erase(*k);
 	}
 }
@@ -347,6 +347,7 @@ errorType Node::postBlock(unsigned int neighbourPos, unsigned int height)
 	client->POST("/eda_coin/send_block", blck);
 	//client.sendRequest();
 	clients.push_back(client);
+	cout << "Created Client" << endl;
 	notifyAllObservers();
 	return err;
 }
@@ -360,6 +361,7 @@ errorType Node::getBlockHeader(unsigned int height, unsigned int neighbourPos)
 	client->GET("/eda_coin/get_block_header/", header);
 	//client.sendRequest();
 	clients.push_back(client);
+	cout << "Created Get" << endl;
 	notifyAllObservers();
 	return err;
 }
@@ -373,6 +375,7 @@ errorType Node::postTransaction(unsigned int neighbourPos, Transaction tx)
 	client->POST("/eda_coin/send_tx", tx_);
 	//client.sendRequest();
 	clients.push_back(client);
+	cout << "Created Client" << endl;
 	notifyAllObservers();
 	return err;
 }
@@ -387,6 +390,7 @@ errorType Node::postMerkleBlock(unsigned int neighbourPos)
 
 	//client.sendRequest();
 	clients.push_back(client);
+	cout << "Created Client" << endl;
 	notifyAllObservers();
 	return err;
 }
@@ -401,6 +405,7 @@ errorType Node::postFilter(unsigned int neighbourPos)
 
 	//client.sendRequest();
 	clients.push_back(client);
+	cout << "Created Client" << endl;
 	notifyAllObservers();
 	return err;
 }
