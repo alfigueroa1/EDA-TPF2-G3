@@ -113,7 +113,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>D:\boost_1_71_0;C:\Users\Gianfranco\source\repos\curl\builds\libcurl-vc-x64-release-dll-ipv6-sspi-winssl\include\curl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\boost_1_71_0;C:\Users\Gianfranco\source\repos\curl\builds\libcurl-vc-x64-release-dll-ipv6-sspi-winssl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
