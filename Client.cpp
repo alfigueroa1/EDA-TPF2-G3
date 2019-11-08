@@ -23,6 +23,7 @@ Client::Client(sSocket socket)
 
 Client::~Client() 
 {
+	cout << "Destroyed Client" << endl;
 	curl_multi_remove_handle(curlm, curl);
 	curl_easy_cleanup(curl);
 	curl_multi_cleanup(curlm);
