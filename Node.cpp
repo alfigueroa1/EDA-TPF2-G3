@@ -41,7 +41,7 @@ Node::Node(string _ID, string _port, string _IP) { //constructor modificado para
 //DESTRUCTOR
 Node::~Node() { // igual el destructor
 
-	cout << "Destroyed" << endl;
+	cout << "Destroyed node" << endl;
 
 	delete myID;
 	delete IP;
@@ -351,11 +351,11 @@ errorType Node::postBlock(unsigned int neighbourPos, unsigned int height)
 	errorType err = { false,"" };
 	Client* client = new Client(neighbourhood[neighbourPos]);
 	string blck = createJsonBlock(height);
-
+	cout << "JSON:" << endl << blck << endl;	//DEBUG
 	client->POST("/eda_coin/send_block", blck);
 	client->sendRequest();
 	clients.push_back(client);
-	cout << "Created Client" << endl;
+	cout << "Created Client" << endl;		//DEBUG
 	notifyAllObservers();
 	return err;
 }
@@ -365,11 +365,10 @@ errorType Node::getBlockHeader(unsigned int height, unsigned int neighbourPos)
 	errorType err = { false,"" };
 	Client* client = new Client(neighbourhood[neighbourPos]);
 	string header = createHeader(height);
-
+	cout << "JSON:" << endl << header << endl;	//DEBUG
 	client->GET("/eda_coin/get_block_header/", header);
 	client->sendRequest();
 	clients.push_back(client);
-	cout << "Created Get" << endl;
 	notifyAllObservers();
 	return err;
 }
@@ -379,7 +378,7 @@ errorType Node::postTransaction(unsigned int neighbourPos, Transaction tx)
 	errorType err = { false,"" };
 	Client* client = new Client(neighbourhood[neighbourPos]);
 	string tx_ = createJsonTx(tx);
-
+	cout << "JSON:" << endl << tx_ << endl;	//DEBUG
 	client->POST("/eda_coin/send_tx", tx_);
 	client->sendRequest();
 	clients.push_back(client);
@@ -395,7 +394,7 @@ errorType Node::postMerkleBlock(unsigned int neighbourPos)
 	//ADD CREATED CLIENTS TO CLIENT LIST
 	string merkle = createJsonMerkle();
 	client->POST("/eda_coin/send_merkle_block", merkle);
-
+	cout << "JSON:" << endl << merkle << endl;	//DEBUG
 	client->sendRequest();
 	clients.push_back(client);
 	cout << "Created Client" << endl;
@@ -410,7 +409,7 @@ errorType Node::postFilter(unsigned int neighbourPos)
 	Client* client = new Client(neighbourhood[neighbourPos]);
 	string id = createJsonFilter(*myID);
 	client->POST("/eda_coin/send_filter", id);
-
+	cout << "JSON:" << endl << id << endl;	//DEBUG
 	client->sendRequest();
 	clients.push_back(client);
 	cout << "Created Client" << endl;
