@@ -351,7 +351,6 @@ errorType Node::postBlock(unsigned int neighbourPos, unsigned int height)
 	errorType err = { false,"" };
 	Client* client = new Client(neighbourhood[neighbourPos]);
 	string blck = createJsonBlock(height);
-	cout << "JSON:" << endl << blck << endl;	//DEBUG
 	client->POST("/eda_coin/send_block", blck);
 	client->sendRequest();
 	clients.push_back(client);
@@ -409,7 +408,6 @@ errorType Node::postFilter(unsigned int neighbourPos)
 	Client* client = new Client(neighbourhood[neighbourPos]);
 	string id = createJsonFilter(*myID);
 	client->POST("/eda_coin/send_filter", id);
-	cout << "JSON:" << endl << id << endl;	//DEBUG
 	client->sendRequest();
 	clients.push_back(client);
 	cout << "Created Client" << endl;
