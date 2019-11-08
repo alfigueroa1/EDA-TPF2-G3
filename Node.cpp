@@ -158,10 +158,14 @@ void Node::keepListening()
 {
 	vector<vector<Server*>::iterator> deleteThis;
 	vector<Server*> doneServers;
+	servers.back()->listening();
+
 	if ((*(servers.end() - 1))->getDoneListening()) {
+		cout << "Latest Server picked up something!" << endl;
 		Server* newServer = new Server(port);
 		newServer->startConnection();
 		servers.push_back(newServer);
+		cout << "New Server created and pushed!" << endl;
 	}
 	auto i = servers.begin();
 	for (; i != servers.end()-1; i++) {
@@ -170,6 +174,7 @@ void Node::keepListening()
 		else if (!(*i)->getDoneSending())
 			(*i)->sendMessage(serverResponse((*i)->getState()));
 		if ((*i)->getDoneSending()) {
+			cout << "Server done servering" << endl;
 			doneServers.push_back(*i);
 			deleteThis.push_back(i);
 		}
@@ -301,12 +306,15 @@ void Node::saveTx(string _trans) {
 
 void Node::keepSending()
 {	
+	if (clients.empty())
+		return;
 	vector<vector<Client*>::iterator> deleteThis;
 	vector<Client*> doneClients;
 
 	auto i = clients.begin();
 	for (; i != clients.end(); i++) {
 		if ((*i)->getRunning() == 0) {
+			cout << "Client did it's job!" << endl;
 			doneClients.push_back(*i);
 			deleteThis.push_back(i);
 		}
@@ -345,7 +353,7 @@ errorType Node::postBlock(unsigned int neighbourPos, unsigned int height)
 	string blck = createJsonBlock(height);
 
 	client->POST("/eda_coin/send_block", blck);
-	//client.sendRequest();
+	client->sendRequest();
 	clients.push_back(client);
 	cout << "Created Client" << endl;
 	notifyAllObservers();
@@ -359,7 +367,7 @@ errorType Node::getBlockHeader(unsigned int height, unsigned int neighbourPos)
 	string header = createHeader(height);
 
 	client->GET("/eda_coin/get_block_header/", header);
-	//client.sendRequest();
+	client->sendRequest();
 	clients.push_back(client);
 	cout << "Created Get" << endl;
 	notifyAllObservers();
@@ -373,7 +381,7 @@ errorType Node::postTransaction(unsigned int neighbourPos, Transaction tx)
 	string tx_ = createJsonTx(tx);
 
 	client->POST("/eda_coin/send_tx", tx_);
-	//client.sendRequest();
+	client->sendRequest();
 	clients.push_back(client);
 	cout << "Created Client" << endl;
 	notifyAllObservers();
@@ -388,7 +396,7 @@ errorType Node::postMerkleBlock(unsigned int neighbourPos)
 	string merkle = createJsonMerkle();
 	client->POST("/eda_coin/send_merkle_block", merkle);
 
-	//client.sendRequest();
+	client->sendRequest();
 	clients.push_back(client);
 	cout << "Created Client" << endl;
 	notifyAllObservers();
@@ -403,7 +411,7 @@ errorType Node::postFilter(unsigned int neighbourPos)
 	string id = createJsonFilter(*myID);
 	client->POST("/eda_coin/send_filter", id);
 
-	//client.sendRequest();
+	client->sendRequest();
 	clients.push_back(client);
 	cout << "Created Client" << endl;
 	notifyAllObservers();
