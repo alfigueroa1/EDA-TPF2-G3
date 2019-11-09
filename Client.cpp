@@ -54,8 +54,9 @@ void Client::POST(string path, string& json)
 		//Seteo para seguir el redireccionamiento
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)(json.size())+1);
+		cout << json << endl;
 		curl_easy_setopt(curl, CURLOPT_COPYPOSTFIELDS, json.c_str());
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)(json.size()));
 
 		curl_multi_add_handle(curlm, curl);
 	}

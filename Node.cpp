@@ -209,6 +209,8 @@ void Node::keepListening()
 	for (; k != deleteThis.end(); k++) {
 		servers.erase(*k);
 	}
+	if (!deleteThis.empty())
+		notifyAllObservers();
 }
 
 void Node::saveMerkleBlock(string _merkleBlock) {
@@ -267,8 +269,11 @@ void Node::saveMerkleBlock(string _merkleBlock) {
 	auto txPos = merkleBlock["txPos"];
 	mBlock.txPos = txPos;
 	
-	/*auto mPath = merkleBlock["merklePath"];
-	mBlock.merklePath = mPath.get<string>();*/
+	auto mPath = merkleBlock["MerklePath"];
+	for (auto& elsi : mPath) {
+		auto Id = mPath["Id"];
+		mBlock.merklePath.push_back(Id.get<string>());
+	}
 
 	merkleBlocks.push_back(mBlock);
 }
@@ -338,6 +343,8 @@ void Node::keepSending()
 	for (; k != deleteThis.end(); k++) {
 		clients.erase(*k);
 	}
+	if (!deleteThis.empty())
+		notifyAllObservers();
 }
 
 void Node::addBlock(Block block) 
@@ -510,7 +517,7 @@ string Node::createJsonMerkle()
 string Node::createJsonFilter(string id)
 {
 	json filter;
-	filter["id"] = id;
+	filter["Id"] = id;
 
 	return filter.dump();
 }
