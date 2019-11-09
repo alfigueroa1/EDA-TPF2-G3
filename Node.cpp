@@ -220,8 +220,13 @@ void Node::saveMerkleBlock(string _merkleBlock) {
 	auto blockId = merkleBlock["blockid"];
 	mBlock.blockId = blockId.get<string>();
 
+	auto mPath = merkleBlock["merklePath"];
+	for (auto& elsi : mPath) {
+		auto Id = elsi["Id"];
+		mBlock.merklePath.push_back(Id.get<string>());
+	}
 	//Transactions
-	auto arrayTrans = merkleBlock["tx"];
+	auto arrayTrans = merkleBlock["tx"][0];
 	for (auto& trans : arrayTrans)
 	{
 		Transaction auxTrans;
@@ -269,11 +274,6 @@ void Node::saveMerkleBlock(string _merkleBlock) {
 	auto txPos = merkleBlock["txPos"];
 	mBlock.txPos = txPos;
 	
-	auto mPath = merkleBlock["MerklePath"];
-	for (auto& elsi : mPath) {
-		auto Id = mPath["Id"];
-		mBlock.merklePath.push_back(Id.get<string>());
-	}
 
 	merkleBlocks.push_back(mBlock);
 }
@@ -470,7 +470,7 @@ string Node::createJsonTx(Transaction trans)
 	auto vout = json::array();
 	for (auto i = 0; i < trans.nTxOut; i++)
 	{
-		vin.push_back(json::object({ {"amount",trans.vOut[i].amount}, {"publicid", trans.vOut[i].publicId} }));
+		vout.push_back(json::object({ {"amount",trans.vOut[i].amount}, {"publicid", trans.vOut[i].publicId} }));
 	}
 	tx["vout"] = vout;
 
@@ -506,7 +506,7 @@ string Node::createJsonMerkle()
 	MerkleTree path = dummieChain.back().getMerklePath(dummieChain.back().getTransactions()[1]);
 	for (int i = 0; i < path.size(); i++)
 	{
-		mpath.push_back({ "Id",path[i] });
+		mpath.push_back(json::object({ { "Id",path[i] } }));
 	}
 	merkle["merklePath"] = mpath;
 
