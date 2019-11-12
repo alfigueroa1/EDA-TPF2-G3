@@ -16,14 +16,16 @@ Server::Server(unsigned int port)
 	doneDownloading = false;
 	doneListening = false;
 	doneSending = false;
-	receiveMsg.clear();
 	bodyMsg.clear();
+	Msg.clear();
+	*buf = {};
 
 
 	IO_handler = new boost::asio::io_service();
 	boost::asio::ip::tcp::endpoint ep(boost::asio::ip::tcp::v4(), port);
 	socket = new boost::asio::ip::tcp::socket(*IO_handler);
 	acceptor = new boost::asio::ip::tcp::acceptor(*IO_handler, ep);
+	active = new boost::asio::io_service::work(*IO_handler);
 }
 
 Server::~Server()
@@ -32,6 +34,7 @@ Server::~Server()
 	socket->close();
 	delete acceptor;
 	delete socket;
+	delete active;
 	delete IO_handler;
 }
 
@@ -41,31 +44,64 @@ void Server::startConnection()
 	doneListening = false;
 	doneSending = false;
 	acceptor->non_blocking(true);
+	IO_handler->poll();
 }
 
 void Server::listening() 
 {
-	acceptor->accept(*socket, error);
-	if (error.value() != WSAEWOULDBLOCK)
+	IO_handler->poll();
+	acceptor->async_accept(*socket, boost::bind(&Server::connectionHandler,this, boost::asio::placeholders::error));
+}
+
+void Server::connectionHandler(const boost::system::error_code& err)
+{
+	if (!err)
 	{
 		doneListening = true;
 		cout << "Connected" << endl;
+	}
+
+	else 
+	{
+		cout << err.message() << endl;
+		cout << "Error while listening" << endl;
 	}
 }
 
 
 void Server::receiveMessage()
 {
-	char buf[1000] = {};
-	size_t len = 0;
-	len = socket->read_some(boost::asio::buffer(buf), error);
-	receiveMsg += buf;
-	if (error.value() != WSAEWOULDBLOCK)
+	IO_handler->poll();
+	socket->async_read_some(boost::asio::buffer(buf), boost::bind(&Server::messaggeHandler, this, 
+		boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+}
+
+
+void Server::messaggeHandler(const boost::system::error_code err, std::size_t bytes)
+{
+	string aux = buf;
+	Msg += buf;
+
+	if(!err && (aux.find("Expect") != string::npos))
+	{
+		doneDownloading = false;
+		cout << "Still Downoading" << endl;
+	}
+
+	else if (!err)
 	{
 		doneDownloading = true;
+		cout << "Finished Download" << endl;
 		state = parseMessage();
-		cout << buf << endl;
+		cout << Msg << endl;
 	}
+
+
+	else
+	{
+		cout << "Error while receiving" << endl;
+	}
+
 }
 
 STATE Server::getState() {
@@ -76,9 +112,9 @@ STATE Server::parseMessage()
 {
 	STATE rta = ERR;
 
-	if (receiveMsg.find("GET") != string::npos)
+	if (Msg.find("GET") != string::npos)
 	{
-		if (receiveMsg.find("/eda_coin/get_block_header/"))
+		if (Msg.find("/eda_coin/get_block_header/"))
 		{
 			rta = GET;
 		}
@@ -89,12 +125,12 @@ STATE Server::parseMessage()
 		}
 	}
 
-	else if (receiveMsg.find("POST") != string::npos)
+	else if (Msg.find("POST") != string::npos)
 	{
-		size_t pos = receiveMsg.find_last_of(CRLF, receiveMsg.length() - strlen(CRLF));
-		bodyMsg = receiveMsg.substr(pos + 1);
+		size_t pos = Msg.find_last_of(CRLF, Msg.length() - strlen(CRLF));
+		bodyMsg = Msg.substr(pos + 1);
 
-		if (receiveMsg.find("/eda_coin/send_block") != string::npos)
+		if (Msg.find("/eda_coin/send_block") != string::npos)
 		{
 			if (validateBlock(bodyMsg))
 			{
@@ -102,7 +138,7 @@ STATE Server::parseMessage()
 			}
 		}
 
-		else if (receiveMsg.find("/eda_coin/send_tx") != string::npos)
+		else if (Msg.find("/eda_coin/send_tx") != string::npos)
 		{
 			if (validateTx(bodyMsg))
 			{
@@ -110,13 +146,13 @@ STATE Server::parseMessage()
 			}
 		}
 
-		else if (receiveMsg.find("/eda_coin/send_merkle_block") != string::npos)
+		else if (Msg.find("/eda_coin/send_merkle_block") != string::npos)
 		{
 			//Not yet
 			rta = MERKLE;
 		}
 
-		else if (receiveMsg.find("/eda_coin/send_filter") != string::npos)
+		else if (Msg.find("/eda_coin/send_filter") != string::npos)
 		{
 			if (validateFilter(bodyMsg))
 			{
@@ -142,17 +178,26 @@ STATE Server::parseMessage()
 
 void Server::sendMessage(const string& message)
 {
-	size_t len;
-	len = socket->write_some(boost::asio::buffer(message, strlen(message.c_str())), error);
-
-	if (error.value() != WSAEWOULDBLOCK)
-	{
-		doneSending = true;
-		cout << message << endl;
-	}
-	
+	response = message;
+	IO_handler->poll();
+	socket->async_write_some(boost::asio::buffer(response, strlen(response.c_str())), boost::bind(&Server::writingHandler,this,
+		boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 }
 
+
+void Server::writingHandler(const boost::system::error_code err, std::size_t bytes)
+{
+	if (!err)
+	{
+		doneSending = true;
+		cout << response << endl;
+	}
+
+	else
+	{
+		cout << "Error while sending" << endl;
+	}
+}
 
 bool Server::getDoneListening() { return doneListening; }
 bool Server::getDoneSending() { return doneSending; }

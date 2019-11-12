@@ -225,52 +225,49 @@ void Node::saveMerkleBlock(string _merkleBlock) {
 		auto Id = elsi["Id"];
 		mBlock.merklePath.push_back(Id.get<string>());
 	}
+
 	//Transactions
-	auto arrayTrans = merkleBlock["tx"][0];
-	for (auto& trans : arrayTrans)
+	auto trans = merkleBlock["tx"];
+	Transaction auxTrans;
+
+	auto txId = trans["txid"];
+	auxTrans.txId = txId.get<string>();
+
+	auto nTxIn = trans["nTxin"];
+	auxTrans.nTxIn = nTxIn;
+
+	auto vIn = trans["vin"];
+	for (auto& elsi : vIn)
 	{
-		Transaction auxTrans;
+		Vin auxVin;
 
-		auto txId = trans["txid"];
-		auxTrans.txId = txId.get<string>();
+		auto tBlockId = elsi["blockid"];
+		auxVin.blockId = tBlockId.get<string>();
 
-		auto nTxIn = trans["nTxin"];
-		auxTrans.nTxIn = nTxIn;
+		auto tTxId = elsi["txid"];
+		auxVin.txId = tTxId.get<string>();
 
-		auto vIn = trans["vin"];
-		for (auto& elsi : vIn)
-		{
-			Vin auxVin;
-
-			auto tBlockId = elsi["blockid"];
-			auxVin.blockId = tBlockId.get<string>();
-
-			auto tTxId = elsi["txid"];
-			auxVin.txId = tTxId.get<string>();
-
-			auxTrans.vIn.push_back(auxVin);
-		}
-
-		auto nTxOut = trans["nTxout"];
-		auxTrans.nTxOut = nTxOut;
-
-		auto vOut = trans["vout"];
-		for (auto& elso : vOut)
-		{
-			Vout auxVout;
-
-			auto publicId = elso["publicid"];
-			auxVout.publicId = publicId.get<string>();
-
-			auto amount = elso["amount"];
-			auxVout.amount = amount;
-
-			auxTrans.vOut.push_back(auxVout);
-		}
-
-		mBlock.tx.push_back(auxTrans);
+		auxTrans.vIn.push_back(auxVin);
 	}
 
+	auto nTxOut = trans["nTxout"];
+	auxTrans.nTxOut = nTxOut;
+
+	auto vOut = trans["vout"];
+	for (auto& elso : vOut)
+	{
+		Vout auxVout;
+
+		auto publicId = elso["publicid"];
+		auxVout.publicId = publicId.get<string>();
+
+		auto amount = elso["amount"];
+		auxVout.amount = amount;
+
+		auxTrans.vOut.push_back(auxVout);
+	}
+
+	mBlock.tx.push_back(auxTrans);
 	auto txPos = merkleBlock["txPos"];
 	mBlock.txPos = txPos;
 	
@@ -442,7 +439,7 @@ string Node::createJsonBlock(unsigned int height)
 		tx += json::parse(createJsonTx(block.getTransactions()[i]));
 	}
 	blck["tx"] = tx;
-	blck["heigh"] = block.getHeight();
+	blck["height"] = block.getHeight();
 	blck["nonce"] = block.getNonce();
 	blck["blockid"] = block.getBlockID();
 	blck["previousblockid"] = block.getPreviousBlockID();
@@ -501,7 +498,7 @@ string Node::createJsonMerkle()
 
 	merkle["blockid"] = dummieChain.back().getBlockID();
 	merkle["tx"] = json::parse(createJsonTx(dummieChain.back().getTransactions()[1]));
-	merkle["txPos"] = 4;
+	merkle["txPos"] = 1;
 	json mpath = json::array();
 	MerkleTree path = dummieChain.back().getMerklePath(dummieChain.back().getTransactions()[1]);
 	for (int i = 0; i < path.size(); i++)

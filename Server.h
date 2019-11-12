@@ -37,13 +37,22 @@ private:
 	bool doneDownloading;
 	bool doneSending;
 	STATE state;
-	string receiveMsg;
 	string bodyMsg;
+	string Msg;
+	string response;
+	char buf[10000];
+
+
+
+
 	boost::system::error_code error;
 	boost::asio::io_service* IO_handler;
 	boost::asio::ip::tcp::socket* socket;
 	boost::asio::ip::tcp::acceptor* acceptor;
-
+	boost::asio::io_service::work* active;
+	void messaggeHandler(const boost::system::error_code err, std::size_t bytes);
+	void connectionHandler(const boost::system::error_code& err);
+	void writingHandler(const boost::system::error_code err, std::size_t bytes);
 	STATE parseMessage();
 	bool validateBlock(string blck);
 	bool validateTx(string tx);
