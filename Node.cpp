@@ -307,41 +307,22 @@ void Node::saveTx(string _trans) {
 }
 
 void Node::keepSending()
-{	
-	if (clients.empty())
-		return;
-	vector<vector<Client*>::iterator> deleteThis;
-	vector<Client*> doneClients;
+{
+	for (int i = 0; i < clients.size(); i++) {
+		clients[i]->sendRequest();
+		if (clients[i]->getRunning() == 0) {
+			//FULLNODES DONT EXPECT ANSWER TO POSTS IN NETWORK_READY STATE (?)
+			if (clients[i]->getClientType() == POSTClient) {
 
-	auto i = clients.begin();
-	for (; i != clients.end(); i++) {
-		if ((*i)->getRunning() == 0) {
-			cout << "Client did it's job!" << endl;
-			doneClients.push_back(*i);
-			deleteThis.push_back(i);
+			}
+			else if (clients[i]->getClientType() == GETClient) {
+				saveMerkleBlock(clients[i]->getResponse());
+			}
+			delete clients[i];								//Destroy client
+			clients.erase(clients.begin() + i);				//Remove client from list
+			notifyAllObservers();
 		}
-		else
-			(*i)->sendRequest();
 	}
-	//Handle finished servers
-	auto j = doneClients.begin();
-	for (; j != doneClients.end(); j++) {
-		//Parse their msgs
-		if ((*j)->getClientType() == POSTClient) {
-
-		}
-		else if ((*j)->getClientType() == GETClient) {
-			saveMerkleBlock((*j)->getResponse());
-		}
-		//And delete them
-		delete* j;
-	}
-	auto k = deleteThis.begin();
-	for (; k != deleteThis.end(); k++) {
-		clients.erase(*k);
-	}
-	if (!deleteThis.empty())
-		notifyAllObservers();
 }
 
 void Node::addBlock(Block block) 
